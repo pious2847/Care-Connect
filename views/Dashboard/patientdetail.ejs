@@ -218,7 +218,7 @@
                                                                     <% patient.medicalRecords.forEach(record=> { %>
                                                                         <tr>
                                                                             <td>
-                                                                                <%= record.diagnosis %>
+                                                                                <%= record.hospital.name %>
                                                                             </td>
                                                                             <td>
                                                                                 <%= new
@@ -229,7 +229,9 @@
                                                                                 <%= record.diagnosis %>
                                                                             </td>
                                                                             <td>
-                                                                                <%= record.doctor %>
+                                                                                <%= record.admitedBy.title %>. 
+                                                                                <%= record.admitedBy.firstname %> 
+                                                                                <%= record.admitedBy.lastname %> 
                                                                             </td>
                                                                             <td>
                                                                                 <%= record.notes %>
