@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= meeting.title %> - Care Connect</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#8936FF">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Care Connect">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <link rel="shortcut icon" href="/icons/favicon.png" type="image/x-icon">
+
+    <meta name="theme-color" content="#6a11cb">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --bg-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f6f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--bg-gradient);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .video-grid video {
+            width: 100%;
+            height: 250px;
+            border-radius: 10px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .video-grid video:hover {
+            transform: scale(1.05);
+        }
+
+        .controls {
+            background: rgba(255,255,255,0.95);
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .controls button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .controls button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+        }
+
+        .btn-danger {
+            background: #ff4757;
+            border: none;
+        }
+
+        .card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .card-header {
+            background: var(--bg-gradient);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .video-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .controls button {
+                padding: 0.5rem 1rem;
+                font-size: 0.5rem;
+            }
+        }
+    </style>
+    <script>
+        const ROOM_ID = '<%= meeting.roomId %>';
+    </script>
+    <script src="https://cdn.socket.io/4.5.3/socket.io.min.js"></script>
+    <script src="/js/webrtc.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Care Connect - Meeting Room</a>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row g-4">
+            <div class="col-lg-9">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><%= meeting.title %></h4>
+                        <span class="badge bg-light text-dark" id="participantCount">0 Participants</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="video-grid" class="video-grid"></div>
+                        <div class="controls mt-3">
+                            <button id="audioBtn" class="btn btn-primary" onclick="toggleAudio()">
+                                <i class="bi bi-mic"></i> Mute
+                            </button>
+                            <button id="videoBtn" class="btn btn-primary" onclick="toggleVideo()">
+                                <i class="bi bi-camera-video"></i> Stop Video
+                            </button>
+                            <button id="screenBtn" class="btn btn-primary" onclick="toggleScreenShare()">
+                                <i class="bi bi-display"></i> Share Screen
+                            </button>
+                            <button class="btn btn-danger" onclick="leaveMeeting()">
+                                <i class="bi bi-telephone-x"></i> Leave
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
+                <div class="card h-100">
+                    <div class="card-header">Meeting Details</div>
+                    <div class="card-body">
+                        <p><strong>Meeting ID:</strong> <%= meeting.roomId %></p>
+                        <p><strong>Host:</strong> <%= meeting.organizer %></p>
+                        <p><strong>Description:</strong> <%= meeting.description %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

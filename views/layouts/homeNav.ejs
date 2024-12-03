@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+
+    /* Mobile menu styles */
+    .mobile-menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 300px;
+      height: 100%;
+      background-color: white;
+      z-index: 1000;
+      transition: right 0.3s ease;
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+    }
+
+    .mobile-menu.active {
+      right: 0;
+    }
+
+    .mobile-menu-header {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mobile-menu-close {
+      font-size: 24px;
+      background: none;
+      border: none;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .mobile-search {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .mobile-nav {
+      padding: 15px;
+    }
+
+    .mobile-nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .mobile-nav li {
+      margin-bottom: 15px;
+    }
+
+    .mobile-nav a {
+      color: #333;
+      text-decoration: none;
+      font-size: 16px;
+      display: block;
+      padding: 8px 0;
+    }
+
+    .mobile-nav .btn {
+      width: 100%;
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .mobile-social {
+      padding: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .mobile-social a {
+      margin-right: 15px;
+      font-size: 20px;
+      color: #333;
+    }
+
+    /* Hide mobile menu on larger screens */
+    @media (min-width: 992px) {
+      .mobile-menu, .mobile-menu-overlay {
+        display: none !important;
+      }
+    }
+
+    /* Hide desktop menu on mobile */
+    @media (max-width: 991px) {
+      .navbar-collapse {
+        display: none !important;
+      }
+      
+      .input-navbar {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Back to top button -->
+<div class="back-to-top"></div>
+
+<header>
+  <div class="topbar">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-8 text-sm">
+          <div class="site-info">
+            <a href="#"><span class="mai-call text-primary"></span> +00 123 4455 6666</a>
+            <span class="divider">|</span>
+            <a href="#"><span class="mai-mail text-primary"></span> mail@example.com</a>
+          </div>
+        </div>
+        <div class="col-sm-4 text-right text-sm">
+          <div class="social-mini-button">
+            <a href="#"><span class="mai-logo-facebook-f"></span></a>
+            <a href="#"><span class="mai-logo-twitter"></span></a>
+            <a href="#"><span class="mai-logo-dribbble"></span></a>
+            <a href="#"><span class="mai-logo-instagram"></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="/"><span class="text-primary">Care</span>-Connect</a>
+
+    
+
+      <button class="navbar-toggler" type="button" id="mobileMenuButton">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Desktop Menu -->
+      <div class="collapse navbar-collapse" id="navbarSupport">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item ">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/doctors">Doctors</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/contact">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-primary ml-lg-3" href="/login">Login / Register</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      <a class="navbar-brand" href="#"><span class="text-primary">One</span>-Health</a>
+      <button class="mobile-menu-close" id="mobileMenuClose">&times;</button>
+    </div>
+    
+
+
+    <nav class="mobile-nav">
+      <ul>
+        <li class="active">
+          <a href="/">Home</a>
+        </li>
+        <li>
+          <a href="/about">About Us</a>
+        </li>
+        <li>
+          <a href="/doctors">Doctors</a>
+        </li>
+        <li>
+          <a href="/contact">Contact</a>
+        </li>
+        <li>
+          <a class="btn btn-primary" href="/login">Login / Register</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="mobile-social">
+      <a href="#"><span class="mai-logo-facebook-f"></span></a>
+      <a href="#"><span class="mai-logo-twitter"></span></a>
+      <a href="#"><span class="mai-logo-dribbble"></span></a>
+      <a href="#"><span class="mai-logo-instagram"></span></a>
+    </div>
+  </div>
+</header>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
+    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+
+    // Open mobile menu
+    mobileMenuButton.addEventListener('click', function() {
+      mobileMenu.classList.add('active');
+      mobileMenuOverlay.style.display = 'block';
+      document.body.style.overflow = 'hidden'; // Prevent body scrolling
+    });
+
+    // Close mobile menu
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('active');
+      mobileMenuOverlay.style.display = 'none';
+      document.body.style.overflow = ''; // Restore body scrolling
+    }
+
+    mobileMenuClose.addEventListener('click', closeMobileMenu);
+    mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+
+    // Close menu on link click
+    const mobileMenuLinks = mobileMenu.getElementsByTagName('a');
+    for (let link of mobileMenuLinks) {
+      link.addEventListener('click', closeMobileMenu);
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+      if (window.innerWidth >= 992) {
+        closeMobileMenu();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

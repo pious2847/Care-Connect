@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('./layouts/header') %>
+
+    <body>
+    <%- include('../popups/alert') %>
+
+        <div class="container-fluid">
+            <div class="row ">
+
+                <%- include('./layouts/sidebar') %>
+                    <!-- Mobile Overlay -->
+                    <div class="mobile-overlay"></div>
+                    <div class="main-content p-3">
+                        <%- include('./layouts/topnav') %>
+
+
+                            <div class="contentwrapper">
+                                <div class="col">
+                                    <div class="row justify-content-between align-content-center">
+                                        <div class="welcome mb-4">
+                                            <h4 class="text-primary font-monospace">Patients</h4>
+                                            <p class="small">A brief summary of registered patients</p>
+                                        </div>
+                                
+                                    </div>
+                                
+                                    <div class="tablecontainer table-responsive">
+                                        <table class="table table-hover">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Profile</th>
+                                                    <th scope="col">Full Name</th>
+                                                    <th scope="col">Email</th>
+                                                    <th scope="col">Contact</th>
+                                                    <th scope="col">Gender</th>
+                                                    <th scope="col">Blood Group</th>
+                                                    <th scope="col">Admission Status</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% if (patients && patients.length > 0) { %>
+                                                    <% patients.forEach((patient, index) => { %>
+                                                        <tr>
+                                                            <td data-label="#">
+                                                                <%= index + 1 %>
+                                                            </td>
+                                                            <td data-label="Profile">
+                                                                <img src="<%= patient.profilePicture.picture %>" alt="Patient profile" 
+                                                                     class="rounded-circle" height="40" width="40">
+                                                            </td>
+                                                            <td data-label="Full Name">
+                                                                <%= patient.firstName %> <%= patient.lastName %>
+                                                            </td>
+                                                            <td data-label="Email">
+                                                                <a href="mailto:<%= patient.contact.email %>"><%= patient.contact.email %></a>
+                                                            </td>
+                                                            <td data-label="Contact">
+                                                                <a href="tel:+233 <%= patient.contact.phone %>"><%= patient.contact.phone %></a>
+                                                            </td>
+                                                            <td data-label="Gender">
+                                                                <%= patient.gender %>
+                                                            </td>
+                                                            <td data-label="Blood Group">
+                                                                <%= patient.bloodGroup %>
+                                                            </td>
+                                                            <td data-label="Admission Status">
+                                                                <span class="badge p-2 text-white bg-<%= patient.currentAdmission.isAdmitted ? 'success' : 'danger' %>">
+                                                                    <%= patient.currentAdmission.isAdmitted ? 'Admitted' : 'Not Admitted' %>
+                                                                </span>
+                                                            </td>
+                                                            <td data-label="Action">
+                                                                <div class="btn-group">
+                                                                    <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#updatePatientModal" data-patient='<%- JSON.stringify(patient) %>'>
+                                                                        <i class="bi bi-pencil"></i> Edit
+                                                                    </button>
+                                                                    <a href="/dashboard/<%= accountType %>/<%= account._id %>/patient/<%= patient._id %>" class="btn btn-sm btn-outline-warning" >
+                                                                        <i class="bi bi-pencil"></i> view
+                                                                    </a>
+                                                                    <%- include('../forms/patients/updates', {patient: patient}) %>
+                                
+                                                                    <a href="/patient/delete/<%= patient._id %>" 
+                                                                       class="btn btn-sm btn-outline-danger ms-1"
+                                                                       onclick="return confirm('Are you sure you want to delete this patient record? \nThis action cannot be undone.')">
+                                                                        <i class="bi bi-trash"></i> Delete
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    <% }) %>
+                                                <% } else { %>
+                                                    <tr>
+                                                        <td colspan="9" class="text-center">No patient records found</td>
+                                                    </tr>
+                                                <% } %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <script>
+                                    $('#updatePatientModal').on('show.bs.modal', function (event) {
+                                        var button = $(event.relatedTarget) // Button that triggered the modal
+                                        var patient = button.data('patient') // Extract info from data-* attributes
+                                        
+                                        // Populate the form fields with the selected patient's data
+                                        var modal = $(this)
+                                        modal.find('#firstName').val(patient.firstName)
+                                        modal.find('#lastName').val(patient.lastName)
+                                        modal.find('#dateOfBirth').val(patient.dateOfBirth)
+                                        modal.find('#gender').val(patient.gender)
+                                        modal.find('#email').val(patient.contact.email)
+                                        modal.find('#phone').val(patient.contact.phone)
+                                        modal.find('#emergencyContactName').val(patient.contact.emergencyContact.name)
+                                        modal.find('#emergencyContactRelationship').val(patient.contact.emergencyContact.relationship)
+                                        modal.find('#emergencyContactPhone').val(patient.contact.emergencyContact.phone)
+                                        modal.find('#street').val(patient.address.street)
+                                        modal.find('#city').val(patient.address.city)
+                                        modal.find('#state').val(patient.address.state)
+                                        modal.find('#zipCode').val(patient.address.zipCode)
+                                        modal.find('#country').val(patient.address.country)
+                                        modal.find('#bloodGroup').val(patient.bloodGroup)
+                                        modal.find('#allergies').val(patient.allergies.join(', '))
+                                        modal.find('#chronicConditions').val(patient.chronicConditions.join(', '))
+                                
+                                        // Update the form action to include the patient ID
+                                        modal.find('#patientForm').attr('action', '/patient/update/' + patient._id)
+                                    })
+                                </script>
+                             
+                               
+                            </div>
+                    </div>
+            </div>
+        </div>
+
+
+    </body>
+
+</html>
