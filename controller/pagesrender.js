@@ -258,8 +258,20 @@ const RenderPages = {
         const alert = { message: alertMessage, status: alertStatus };
 
         const patient = await Patients.findById(patientId)
-            .populate('medicalRecords')
-            .populate('registeredHospitals.hospital',);
+        .populate({
+            path: 'medicalRecords',
+            populate: [
+                {
+                    path: 'admitedBy',
+                    select: 'title firstname lastname email'
+                },
+                {
+                    path: 'hospital',
+                    select: 'name location'
+                }
+            ]
+        })
+        .populate('registeredHospitals.hospital');
 
         if (!patient.registeredHospitals.some(reg => reg.hospital._id.toString() === Id)) {
             console.log('Patient not found in this hospital');
@@ -270,9 +282,9 @@ const RenderPages = {
                 .populate('staffs')
                 .populate('appointments')
                 .populate('patients')
+                
         }
 
-        console.log(account)
 
         res.render('./Dashboard/patientdetail', { account, alert, accountType, patient, patientId: patient._id, calculateAge: calculateAge })
 

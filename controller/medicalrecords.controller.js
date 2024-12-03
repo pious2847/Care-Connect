@@ -5,9 +5,11 @@ const patients = require('../models/patients');
 
 
 const MecicalRecordsController = {
+
     // @desc    Create a new medical record
-// @route   POST /api/medical-records
+    // @route   POST /api/medical-records
     async createMedicalRecord(req, res) {
+
         try {
             const {
                 hospital,
@@ -48,18 +50,18 @@ const MecicalRecordsController = {
             patient.medicalRecords.push(savedRecord._id);
             await patient.save();
 
-            // Return the created medical record
-            res.status(201).json({
-                success: true,
-                data: savedRecord
-            });
+            req.flash('message', `${patient.firstName} ${patient.lastName}! medical racords has been created successfully.`);
+            req.flash('status', 'success');
+
+            res.redirect(`/dashboard/hospitals/${hospital}/patient/${patientId}`)
+    
         } catch (error) {
-            res.status(400).json({
-                success: false,
-                error: error.message
-            });
+            console.error('Fail to add patient medical records error:', error);
+            req.flash('message', `An error occurred during adding patient medical records.`);
+            req.flash('status', 'danger');
         }
     },
+
     async getMedicalRecords(req, res) {
         try {
             // Pagination

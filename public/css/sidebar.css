@@ -103,7 +103,7 @@
 .nav-link {
     display: flex;
     align-items: center;
-    padding: 12px 15px;
+    padding: 12px 0px;
     color: #333;
     text-decoration: none;
     transition: background 0.3s ease;
