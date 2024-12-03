@@ -1,0 +1,111 @@
+<div class="col">
+  <div class="welcome mb-4 mt-5">
+    <h4 class="text-primary font-monospace">My Dashboard</h4>
+    <p class="small">A brief summary of facility account </p>
+  </div>
+  <div class="hospitalcards">
+    <div class="hospitalcard rounded-lg shadow-md">
+      <div class="card-item rounded-lg shadow-sm p-4">
+        <div class="card-title">
+          <h4 class="text-success">
+            Staffs
+          </h4>
+        </div>
+        <div class="card-value-wrapper">
+          <div
+            class="card-value rounded- border-4 border-yellow-400 w-12 h-12 flex items-center justify-center text-lg font-medium">
+            <%= account.staffs.length %>
+          </div>
+        </div>
+      </div>
+      <div class="card-item rounded-lg shadow-sm p-4">
+        <div class="card-title ">
+          <h4 class="text-warning">
+            Appointments
+          </h4>
+        </div>
+        <div class="card-value-wrapper">
+          <div
+            class="card-value rounded-5 border-2 border-success w-12 h-12 flex items-center justify-center text-lg font-medium">
+            <%= account.appointments.length %>
+          </div>
+        </div>
+      </div>
+      <div class="card-item rounded-lg shadow-sm p-4">
+        <div class="card-title">
+          <h4 class="text-danger">
+            Reviews
+          </h4>
+        </div>
+        <div class="card-value-wrapper">
+          <div
+            class="focus-ring-light focus-ring card-value rounded-full border-4 border-yellow-400 w-12 h-12 flex items-center justify-center text-lg font-medium">
+            30
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class=" megacard card rounded-lg shadow-md p-4">
+      <canvas id="hospitalMetricsChart" class="h-full"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const ctx = document.getElementById('hospitalMetricsChart').getContext('2d');
+    const StaffsLength = parseInt('<%= account.staffs.length %>') || 0;
+    const Reviewslength = parseInt('<%= account.reviews.length %>') || 0;
+    const Appointmentslength = parseInt('<%= account.appointments.length %>') || 0;
+    const Patientslength = parseInt('<%= account.patients.length %>') || 0;
+
+    const chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Appointments', 'Reviews', 'Staffs', 'Patients'],
+        datasets: [{
+          data: [Appointmentslength, Reviewslength, StaffsLength, Patientslength],
+          backgroundColor: [
+            '#4299e1', // Blue
+            '#48bb78', // Green
+            '#e6c65b' , // Yellow
+            '#9b4df5'   //Violet
+          ],
+          borderColor: [
+            '#4299e1',
+            '#48bb78',
+            '#e6c65b',
+            '#9b4df5'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false,
+          },
+          title: {
+            display: true,
+            text: 'Summary Metrics',
+            padding: {
+              top: 10,
+              bottom: 10
+            }
+          }
+        }
+      }
+    });
+  });
+</script>

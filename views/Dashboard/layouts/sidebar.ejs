@@ -1,0 +1,106 @@
+<nav class="sidebar">
+  <div class="sidebar-header">
+
+      <div class="menu-toggle">
+          <i class='bx bx-menu'></i>
+      </div>
+      <img src="/icons/icon-92x92.png" alt="" class="logo-icon">
+      
+      <span class="logo-text"><span class="text-primary">Care</span>-Connect</span>
+  </div>
+  <div class="col justify-content-evenly">
+    <ul class="nav-links">
+        <li class="nav-item">
+            <a href="/dashboard/<%= accountType %>/<%= account._id %>/" class="nav-link">
+                <i class='bx bx-grid-alt'></i>
+                <span class="link-text">Dashboard</span>
+            </a>
+        </li>
+        <% if (accountType === 'hospitals') { %>
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/<%= account._id %>/staffs" class="nav-link">
+                  <i class='bx bx-user'></i>
+                    <span class="link-text">Staffs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/<%= account._id %>/appointments" class="nav-link">
+                    <i class='bx bx-calendar' ></i>
+                    <span class="link-text">Appointments</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/<%= account._id %>/patients" class="nav-link">
+                    <i class='bx bx-health' ></i>
+                    <span class="link-text">Patients</span>
+                </a>
+            </li>
+        <% } %>
+        <% if (account.isOwner) { %>
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/<%= account._id %>/hospitals" class="nav-link">
+                    <i class='bx bx-clinic'></i>
+                    <span class="link-text">Hospitals</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/<%= account._id %>/pharmacies" class="nav-link">
+                    <i class='bx bx-plus-medical'></i>
+                    <span class="link-text">Pharmacies</span>
+                </a>
+            </li>
+        <% } %>
+     
+          <!-- Add more nav items as needed -->
+          <li class="nav-item pt-5">
+            <a href="logout" class="nav-link  ">
+                <i class='bx bx-log-out-circle text-danger'></i>
+                <span class="link-text text-danger">Logout</span>
+            </a>
+        </li>
+      </ul>
+
+     
+  </div>
+
+</nav>
+
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const menuToggle = document.querySelector('.menu-toggle');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const mobileOverlay = document.querySelector('.mobile-overlay');
+            
+            // Desktop menu toggle
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                }
+            });
+
+            // Mobile menu toggle
+            mobileMenu.addEventListener('click', () => {
+                sidebar.classList.add('mobile-active');
+                mobileOverlay.classList.add('active');
+            });
+
+            // Close mobile menu when clicking overlay
+            mobileOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('mobile-active');
+                mobileOverlay.classList.remove('active');
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('mobile-active');
+                    mobileOverlay.classList.remove('active');
+                }
+            });
+        });
+
+</script>

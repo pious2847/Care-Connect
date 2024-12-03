@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('./layouts/header') %>
+
+    <body>
+    <%- include('../popups/alert') %>
+
+        <div class="container-fluid">
+            <div class="row ">
+
+                <%- include('./layouts/sidebar') %>
+                    <!-- Mobile Overlay -->
+                    <div class="mobile-overlay"></div>
+                    <div class="main-content p-3">
+                        <%- include('./layouts/topnav') %>
+
+
+                            <div class="content-wrapper">
+                              <% if (accountType === 'hospitals') { %>
+                               <%- include('./hospital') %>
+                              <% } else if (accountType === 'pharmacies') { %>
+                                    <p>Pharmarcy</p>
+                            <% } else if (accountType === 'staff') { %>
+                                <p>staff</p>
+                            
+                            <% } else { %>
+                                <p>Patient</p>
+                                 <% } %>
+                             <a href="http://" target="_blank" rel="noopener noreferrer"></a>
+                               
+                            </div>
+                    </div>
+            </div>
+        </div>
+
+
+    </body>
+
+</html>

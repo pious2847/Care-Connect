@@ -1,0 +1,255 @@
+<!-- New Medical Record Modal -->
+<div class="modal fade" id="createMedicalRecordModal" tabindex="-1" role="dialog"
+    aria-labelledby="createMedicalRecordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createMedicalRecordModalLabel">Create New Medical Record</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="newMedicalRecordForm" class="needs-validation" novalidate action="/medical-records/create"
+                method="post">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <!-- Hospital Information -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Hospital Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="hospital" class="form-label">Hospital</label>
+                                    <select class="form-control" id="hospital" name="hospital" required>
+                                        <option value="">Select Hospital</option>
+                                        <option value="<%= account._id %>" default>
+                                            <%= account.name %>
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select a hospital.</div>
+                                </div>
+                                <div class="col-md-6 mb-3" >
+                                    <label for="admitedBy" class="form-label">Admite By</label>
+                                    <select name="admitedBy" id="admitedBy" class="custom-select" required>
+                                      
+                                        <option disabled selected>Select Facility</option>
+                                        <% account.staffs.forEach(staff => { %>
+                                          <option value="<%= staff._id %>"><%= staff.title %> <%= staff.firstname %> <%= staff.lastname %></option>
+                                        <% }) %>
+                                    </select>
+                                    <div class="invalid-feedback">Please enter admission date.</div>
+                                  </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="patientId" name="patientId" value="<%= patient._id %>">
+                        <!-- Admission Details -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Admission Details</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="admissionDate" class="form-label">Admission Date</label>
+                                    <input type="date" class="form-control" id="admissionDate" name="admissionDate"
+                                        required>
+                                    <div class="invalid-feedback">Please enter admission date.</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="dischargeDate" class="form-label">Discharge Date (Optional)</label>
+                                    <input type="date" class="form-control" id="dischargeDate" name="dischargeDate">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medical Information -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Medical Information</h5>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label for="diagnosis" class="form-label">Diagnosis</label>
+                                    <input type="text" class="form-control" id="diagnosis" name="diagnosis" required>
+                                    <div class="invalid-feedback">Please enter diagnosis.</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="treatment" class="form-label">Treatment</label>
+                                    <textarea class="form-control" id="treatment" name="treatment" rows="3"
+                                        required></textarea>
+                                    <div class="invalid-feedback">Please describe the treatment.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medications -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Medications</h5>
+                            <div id="medicationsContainer">
+                                <div class="medication-row mb-3">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-2">
+                                            <label class="form-label">Medication Name</label>
+                                            <input type="text" class="form-control" name="medications[0][name]">
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label class="form-label">Dosage</label>
+                                            <input type="text" class="form-control" name="medications[0][dosage]">
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label class="form-label">Frequency</label>
+                                            <input type="text" class="form-control" name="medications[0][frequency]">
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label class="form-label">Start Date</label>
+                                            <input type="date" class="form-control" name="medications[0][startDate]">
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label class="form-label">End Date</label>
+                                            <input type="date" class="form-control" name="medications[0][endDate]">
+                                        </div>
+                                        <div class="col-md-1 mb-2 d-flex align-items-end">
+                                            <button type="button" class="btn btn-danger remove-medication">-</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right mb-3">
+                                <button type="button" id="addMedication" class="btn btn-secondary">+ Add
+                                    Medication</button>
+                            </div>
+                        </div>
+
+                        <!-- Additional Notes -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Additional Notes</h5>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label for="notes" class="form-label">Notes</label>
+                                    <textarea class="form-control" id="notes" name="notes" rows="3" ></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Billing Details -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Billing Information</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="dailyRate" class="form-label">Daily Rate</label>
+                                    <input type="number" class="form-control" id="dailyRate"
+                                        name="billingDetails[dailyRate]" required>
+                                    <div class="invalid-feedback">Please enter daily rate.</div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="billingStatus" class="form-label">Billing Status</label>
+                                    <select class="form-control" id="billingStatus" name="billingStatus">
+                                        <option value="pending">Pending</option>
+                                        <option value="billed">Billed</option>
+                                        <option value="paid">Paid</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="totalAmount" class="form-label">Total Amount</label>
+                                    <input type="number" class="form-control" id="totalAmount"
+                                        name="billingDetails[totalAmount]" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary w-100">Create Medical Record</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (() => {
+        'use strict';
+        const form = document.getElementById('newMedicalRecordForm');
+        const admissionDate = document.getElementById('admissionDate');
+        const dischargeDate = document.getElementById('dischargeDate');
+        const dailyRate = document.getElementById('dailyRate');
+        const totalAmount = document.getElementById('totalAmount');
+
+        // Form validation
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            form.classList.add('was-validated');
+        }, false);
+
+        // Discharge date validation
+        dischargeDate.addEventListener('change', () => {
+            const admission = new Date(admissionDate.value);
+            const discharge = new Date(dischargeDate.value);
+
+            if (discharge < admission) {
+                dischargeDate.setCustomValidity('Discharge date must be after admission date');
+            } else {
+                dischargeDate.setCustomValidity('');
+            }
+        });
+
+        // Dynamic medication row addition
+        const medicationsContainer = document.getElementById('medicationsContainer');
+        const addMedicationButton = document.getElementById('addMedication');
+        let medicationIndex = 1;
+
+        addMedicationButton.addEventListener('click', () => {
+            const newRow = document.createElement('div');
+            newRow.classList.add('medication-row', 'mb-3');
+            newRow.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <input type="text" class="form-control" name="medications[${medicationIndex}][name]" placeholder="Medication Name">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input type="text" class="form-control" name="medications[${medicationIndex}][dosage]" placeholder="Dosage">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input type="text" class="form-control" name="medications[${medicationIndex}][frequency]" placeholder="Frequency">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input type="date" class="form-control" name="medications[${medicationIndex}][startDate]">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input type="date" class="form-control" name="medications[${medicationIndex}][endDate]">
+                    </div>
+                    <div class="col-md-1 mb-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger remove-medication">-</button>
+                    </div>
+                </div>
+            `;
+            medicationsContainer.appendChild(newRow);
+            medicationIndex++;
+
+            // Add event listener to remove button
+            newRow.querySelector('.remove-medication').addEventListener('click', () => {
+                medicationsContainer.removeChild(newRow);
+            });
+        });
+
+        // Calculate total amount dynamically
+        function calculateTotalAmount() {
+            const admission = new Date(admissionDate.value);
+            const discharge = new Date(dischargeDate.value);
+            const rate = parseFloat(dailyRate.value) || 0;
+
+            if (admission && discharge && !isNaN(rate)) {
+                const days = Math.ceil((discharge - admission) / (1000 * 60 * 60 * 24));
+                totalAmount.value = days * rate;
+            } else {
+                totalAmount.value = 0;
+            }
+        }
+
+        // Add event listeners for dynamic total amount calculation
+        admissionDate.addEventListener('change', calculateTotalAmount);
+        dischargeDate.addEventListener('change', calculateTotalAmount);
+        dailyRate.addEventListener('input', calculateTotalAmount);
+    })();
+</script>
