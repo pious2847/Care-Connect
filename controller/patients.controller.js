@@ -4,7 +4,7 @@ const MedicalRecord = require('../models/MedicalRecord');
 const { cloudinary, cleanupUploadedFile } = require('../config/cloudinaryConfig');
 const bcrypt = require('bcrypt');
 const initiatePaystackPayment = require('../utils/payment');
-const { generatePatientPaymentMessage,generateFacilityPaymentMessage  } = require('../utils/messages');
+const { generatePatientPaymentMessage, generateFacilityPaymentMessage } = require('../utils/messages');
 const { sendEmail } = require('../utils/MailSender');
 
 const patientController = {
@@ -82,8 +82,8 @@ const patientController = {
         // console.log('async admite_request made', req)
         try {
             const { action, patientId, facilityId } = req.params
-            if(req.body.dischargeDate){
-                const {dischargeDate, totalAmount} = res.body
+            if (req.body.dischargeDate) {
+                const { dischargeDate, totalAmount } = res.body
             }
 
             const patient = await Patient.findById(patientId);
@@ -114,14 +114,14 @@ const patientController = {
                         hospital: facility._id,
                         registrationDate: new Date()
                     });
-                    
+
 
                     await patient.save();
                     req.flash('message', `${patient.firstName + ' ' + patient.lastName} has been admittented successfully`);
                     req.flash('status', 'success');
                     res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`)
 
-                }else{
+                } else {
                     patient.currentAdmission.isAdmitted = true;
                     patient.currentAdmission.hospital = facility._id;
                     patient.currentAdmission.admissionDate = new Date(Date.now());
@@ -132,13 +132,13 @@ const patientController = {
                     res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`)
 
                 }
-               
-            } 
-            
-            if(action === 'discharge') {
-                
-                const medicalRecords = await MedicalRecord.findOne({hospital:patient.currentAdmission.hospital, admissionDate: patient.currentAdmission.admissionDate })
-                
+
+            }
+
+            if (action === 'discharge') {
+
+                const medicalRecords = await MedicalRecord.findOne({ hospital: patient.currentAdmission.hospital, admissionDate: patient.currentAdmission.admissionDate })
+
                 let patientbills = 0;
 
                 if (req.body.totalAmount) patientbills = totalAmount
@@ -153,20 +153,20 @@ const patientController = {
                     authorization_url: initializeFacilityPayment.authorization_url,
                     dischargeProcessingFee: 50
                 }
-                const patientMessage =  await generatePatientPaymentMessage(patient, medicalRecords.billingDetails, initializePatientPayment.authorization_url  )
-                const facilityMessage =  await generateFacilityPaymentMessage(facility,patient, facilityPaymentDetails  )
+                const patientMessage = await generatePatientPaymentMessage(patient, medicalRecords.billingDetails, initializePatientPayment.authorization_url)
+                const facilityMessage = await generateFacilityPaymentMessage(facility, patient, facilityPaymentDetails)
 
-                    patient.currentAdmission.isAdmitted = false;
-                    patient.currentAdmission.hospital = null;
-                    patient.currentAdmission.admissionDate = null;
-                    
-                    await patient.save();
+                patient.currentAdmission.isAdmitted = false;
+                patient.currentAdmission.hospital = null;
+                patient.currentAdmission.admissionDate = null;
 
-                 await sendEmail(facility.email, 'Patient Discharge Payment (service charges)', facilityMessage )
-                 await sendEmail(patient.contact.email, 'Patient Discharge Payment (service charges)', patientMessage )
+                await patient.save();
 
-                 req.flash('message', `${patient.firstName + ' ' + patient.lastName} has been discharged successfully`);
-                 req.flash('status', 'success');
+                await sendEmail(facility.email, 'Patient Discharge Payment (service charges)', facilityMessage)
+                await sendEmail(patient.contact.email, 'Patient Discharge Payment (service charges)', patientMessage)
+
+                req.flash('message', `${patient.firstName + ' ' + patient.lastName} has been discharged successfully`);
+                req.flash('status', 'success');
                 res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`)
             }
 
@@ -174,6 +174,40 @@ const patientController = {
             console.error('Patient Discharge error error:', error);
             req.flash('message', `An error occurred during registration. Please try again.`);
             req.flash('status', 'danger');
+        }
+    },
+    // Search patient by name and email address
+    async searchPatient(req, res) {
+        try {
+            const { query } = req.query;
+            const { Id, accountType, patientId } = req.params;
+            const alertMessage = req.flash("message");
+            const alertStatus = req.flash("status");
+
+            const alert = { message: alertMessage, status: alertStatus };
+
+            // Split the query into first and last name
+            const [firstName, ...lastName] = query.split(' ');
+            
+            // Search for patients by first name, last name, and email
+            const patients = await Patient.find({
+                $or: [
+                    { firstName: { $regex: new RegExp(firstName, 'i') } },
+                    { lastName: { $regex: new RegExp(lastName.join(' '), 'i') } },
+                    { 'contact.email': { $regex: new RegExp(query, 'i') } }
+                ]
+            }).populate('registeredHospitals.hospital');
+            let account = null;
+            if (Id) {
+                account = await Hospitals.findById(Id)
+                    .populate('staffs')
+                    .populate('appointments')
+                    .populate('patients')
+            }
+            res.render('./Dashboard/patientsearch', { patients, accountType, account, alert });
+        } catch (error) {
+            console.error('Error searching patients:', error);
+            res.status(500).json({ message: 'Error searching patients' });
         }
     },
     // Update patient information

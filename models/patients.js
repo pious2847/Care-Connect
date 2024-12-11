@@ -30,7 +30,8 @@ const PatientSchema = new mongoose.Schema({
       },
       email: {
           type: String,
-          trim: true
+          trim: true,
+          unique: true
       },
       emergencyContact: {
           name: String,
