@@ -40,6 +40,8 @@ const AppointmentSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Hospitals'
     }
+}, {
+    timestamps: true
 });
 
 const Appointments = mongoose.model('Appointments', AppointmentSchema);

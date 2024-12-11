@@ -83,9 +83,10 @@ const PatientSchema = new mongoose.Schema({
           type: mongoose.Schema.ObjectId,
           ref: 'Hospitals'
       },
-      admissionDate: Date,
-      ward: String,
-      bedNumber: String
+      admissionDate: {
+        type: Date,
+        default: null
+      },
   },
   profilePicture: {
       picture: {

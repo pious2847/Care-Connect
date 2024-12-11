@@ -83,6 +83,8 @@ const Pharmacieschema = new mongoose.Schema({
         }
     ]
 
+}, {
+    timestamps: true
 });
 
 const Pharmacies = mongoose.model('Pharmacies', Pharmacieschema);

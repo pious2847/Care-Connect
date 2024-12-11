@@ -18,34 +18,41 @@
 
                                 <div class="contentwrapper">
                                     <div class="container-fluid py-4 col">
-                                        <div class="row justify-content-between align-content-center mb-3">
-                                            <div class="welcome mb-4">
+                                        <div class="row justify-content-between align-items-center align-content-center mb-3">
+                                            <div class="welcome ">
                                                 <h4 class="text-primary font-monospace">Patient Details</h4>
                                                 <p class="small">A brief details of <%= patient.firstName %>
                                                         <%= patient.lastName %>
                                                 </p>
                                             </div>
 
-                                            <div class="flex-row gap-5 align-content-center">
+                                            <div class="row g-5 align-content-center  justify-content-evenly ">
                                                 <% if (patient.currentAdmission.isAdmitted) { %>
 
-                                                    <button type="button" class="btn btn-primary mt-4"
+                                                    <button type="button" class="btn btn-primary mt-4 "
                                                         data-toggle="modal" data-target="#createMedicalRecordModal"
                                                         data-patient-id="<%= patient._id %>">
                                                         Add Medical Records
                                                     </button>
+                                                    <i style="width: 10px;">  </i>
                                                     <%- include('../forms/patients/addMedicalRecords') %>
                                                         <% } %>
 
                                                             <% if (patient.currentAdmission.isAdmitted) { %>
-                                                                <a href="/dashboard/<%= accountType %>/<%= account._id %>/patient/<%= patient._id %>/Discharge"
-                                                                    class="btn btn-outline-warning mt-4">Discharge
-                                                                    Patient</a>
-                                                                <% } else { %>
+                                                                <form
+                                                                    action="/dashboard/<%= account._id %>/patient/<%= patient._id %>/discharge"
+                                                                    method="post">
+                                                                    <button class="btn btn-outline-warning mt-4"
+                                                                        type="submit">Discharge Patient</button>
+                                                                </form>
 
-                                                                    <a href="/dashboard/<%= accountType %>/<%= account._id %>/patient/<%= patient._id %>/admit"
-                                                                        class="btn btn-outline-warning mt-4">Admitte
-                                                                        Patient</a>
+                                                                <% } else { %>
+                                                                    <form
+                                                                        action="/dashboard/<%= account._id %>/patient/<%= patient._id %>/admit"
+                                                                        method="post">
+                                                                        <button class="btn btn-outline-warning mt-4"
+                                                                            type="submit">Admitte Patient</button>
+                                                                    </form>
                                                                     <% } %>
 
 
@@ -166,14 +173,14 @@
 
                                                 <div class="card">
                                                     <div class="card-header bg-warning text-white">
-                                                        <h4>Registered Hospitals</h4>
+                                                        <h4>Previous Visited Hospitals</h4>
                                                     </div>
                                                     <div class="card-body">
                                                         <table class="table">
                                                             <thead>
                                                                 <tr>
                                                                     <th>Hospital</th>
-                                                                    <th>Registration Date</th>
+                                                                    <th>Visited Date</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -229,9 +236,9 @@
                                                                                 <%= record.diagnosis %>
                                                                             </td>
                                                                             <td>
-                                                                                <%= record.admitedBy.title %>. 
-                                                                                <%= record.admitedBy.firstname %> 
-                                                                                <%= record.admitedBy.lastname %> 
+                                                                                <%= record.admitedBy.title %>.
+                                                                                    <%= record.admitedBy.firstname %>
+                                                                                        <%= record.admitedBy.lastname %>
                                                                             </td>
                                                                             <td>
                                                                                 <%= record.notes %>
@@ -249,10 +256,11 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    
                                 </div>
                         </div>
                 </div>
+                
             </div>
 
             <script>

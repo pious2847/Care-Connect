@@ -4,6 +4,8 @@ const MedicalRecord = require('../models/MedicalRecord');
 const { cloudinary, cleanupUploadedFile } = require('../config/cloudinaryConfig');
 const bcrypt = require('bcrypt');
 const initiatePaystackPayment = require('../utils/payment');
+const { generatePatientPaymentMessage,generateFacilityPaymentMessage  } = require('../utils/messages');
+const { sendEmail } = require('../utils/MailSender');
 
 const patientController = {
     // Create new patient
@@ -74,12 +76,15 @@ const patientController = {
         req.flash('message', `${patient.firstName + ' ' + patient.lastName} Account has been registered successfully`);
         req.flash('status', 'success');
         res.redirect(`/login`)
-       
+
     },
-    async admite_DischargePatient(req, res){
+    async admite_DischargePatient(req, res) {
+        // console.log('async admite_request made', req)
         try {
-            const {action, patientId, facilityId}= req.params
-            // const {dischargeDate, totalAmount} = res.body
+            const { action, patientId, facilityId } = req.params
+            if(req.body.dischargeDate){
+                const {dischargeDate, totalAmount} = res.body
+            }
 
             const patient = await Patient.findById(patientId);
             const facility = await Hospitals.findById(facilityId);
@@ -87,14 +92,17 @@ const patientController = {
 
             if (action === 'admit') {
                 const patientcurrentAdmission = patient.currentAdmission.isAdmitted;
-                
+
+                console.log(patientcurrentAdmission)
+
                 if (patientcurrentAdmission) {
                     req.flash('message', `${patient.firstName + ' ' + patient.lastName} is already admittented at ${facility.name}. contact facility to diacharge patient.`);
                     req.flash('status', 'danger');
                     res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._d}`)
                 }
-               const patientAlreadyAdmited = facility.patients.includes(patient._id)
-               if (!patientAlreadyAdmited) {
+                const patientAlreadyAdmited = facility.patients.includes(patient._id)
+
+                if (!patientAlreadyAdmited) {
                     facility.patients.push(patient._id)
                     await facility.save();
 
@@ -103,25 +111,65 @@ const patientController = {
                     patient.currentAdmission.admissionDate = new Date();
 
                     patient.registeredHospitals.push({
-                    hospital: facility._id,
-                    registrationDate: new Date()
-                    })
+                        hospital: facility._id,
+                        registrationDate: new Date()
+                    });
+                    
 
                     await patient.save();
                     req.flash('message', `${patient.firstName + ' ' + patient.lastName} has been admittented successfully`);
                     req.flash('status', 'success');
                     res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`)
 
-               }
-            }else{
-                  // Initialize payment for patient 
-            // const initializePayment = await initiatePaystackPayment(patient.email, 300, patient);
+                }else{
+                    patient.currentAdmission.isAdmitted = true;
+                    patient.currentAdmission.hospital = facility._id;
+                    patient.currentAdmission.admissionDate = new Date(Date.now());
 
-            //     patient.currentAdmission.isAdmitted = false;
-            //     patient.currentAdmission.hospital = facility._id;
-            //     patient.currentAdmission.admissionDate = new Date();
-            }
+                    await patient.save();
+                    req.flash('message', `${patient.firstName + ' ' + patient.lastName} has been admittented successfully`);
+                    req.flash('status', 'success');
+                    res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`)
+
+                }
+               
+            } 
             
+            if(action === 'discharge') {
+                
+                const medicalRecords = await MedicalRecord.findOne({hospital:patient.currentAdmission.hospital, admissionDate: patient.currentAdmission.admissionDate })
+                
+                let patientbills = 0;
+
+                if (req.body.totalAmount) patientbills = totalAmount
+                else patientbills = medicalRecords.billingDetails.totalAmount;
+
+
+                // // Initialize payments for facility & patient 
+                const initializePatientPayment = await initiatePaystackPayment(patient.contact.email, patientbills, patient);
+                const initializeFacilityPayment = await initiatePaystackPayment(facility.email, patientbills, facility);
+
+                const facilityPaymentDetails = {
+                    authorization_url: initializeFacilityPayment.authorization_url,
+                    dischargeProcessingFee: 50
+                }
+                const patientMessage =  await generatePatientPaymentMessage(patient, medicalRecords.billingDetails, initializePatientPayment.authorization_url  )
+                const facilityMessage =  await generateFacilityPaymentMessage(facility,patient, facilityPaymentDetails  )
+
+                    patient.currentAdmission.isAdmitted = false;
+                    patient.currentAdmission.hospital = null;
+                    patient.currentAdmission.admissionDate = null;
+                    
+                    await patient.save();
+
+                 await sendEmail(facility.email, 'Patient Discharge Payment (service charges)', facilityMessage )
+                 await sendEmail(patient.contact.email, 'Patient Discharge Payment (service charges)', patientMessage )
+
+                 req.flash('message', `${patient.firstName + ' ' + patient.lastName} has been discharged successfully`);
+                 req.flash('status', 'success');
+                res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`)
+            }
+
         } catch (error) {
             console.error('Patient Discharge error error:', error);
             req.flash('message', `An error occurred during registration. Please try again.`);
@@ -198,7 +246,7 @@ const patientController = {
     },
 
     // Delete patient
-   async deletePatient(req, res){
+    async deletePatient(req, res) {
         const { patientId } = req.params;
         const hospitalId = req.hospital.id;
 

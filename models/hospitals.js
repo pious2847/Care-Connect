@@ -99,6 +99,8 @@ const HospitalSchema = new mongoose.Schema({
         default: false
     }
 
+}, {
+    timestamps: true
 });
 
 const Hospitals = mongoose.model('Hospitals', HospitalSchema);
