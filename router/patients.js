@@ -10,5 +10,7 @@ router.post('/patients/register', upload.fields([
 ]), patientController.createPatient);
 
 router.post('/dashboard/:facilityId/patient/:patientId/:action',  patientController.admite_DischargePatient)
+router.get('/dashboard/:accountType/:Id/patients/search', patientController.searchPatient);
+
 
 module.exports = router;

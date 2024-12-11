@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('./layouts/header') %>
+
+    <body>
+    <%- include('../popups/alert') %>
+
+        <div class="container-fluid">
+            <div class="row ">
+
+                <%- include('./layouts/sidebar') %>
+                    <!-- Mobile Overlay -->
+                    <div class="mobile-overlay"></div>
+                    <div class="main-content p-3">
+                        <%- include('./layouts/topnav') %>
+
+
+                            <div class="contentwrapper">
+                                <!-- Creating a flexible responsive container for patients cards  -->
+                                 <div class="row">
+                                    <% if (patients && patients.length > 0) { %>
+                                        <% patients.forEach(patient => { %>
+                                         <%- include('../components/patientCards', {patient}) %>
+                                        <% }) %>
+                                        <% } else { %>
+                                             <div class="col-12">
+                                                 <h2 class="text-center">No patients found.</h2>
+                                             </div>
+                                            <% } %>
+                                     
+                                 </div>
+                               
+                            </div>
+                    </div>
+            </div>
+        </div>
+
+
+    </body>
+
+</html>
