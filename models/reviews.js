@@ -18,6 +18,8 @@ const Reviewschema = new mongoose.Schema({
         }
     ]
 
+}, {
+    timestamps: true
 });
 
 const Reviews = mongoose.model('Reviews', Reviewschema);
