@@ -2,7 +2,8 @@ const Patient = require('../models/patients');
 const Hospitals = require('../models/hospitals');
 const MedicalRecord = require('../models/MedicalRecord');
 const { cloudinary, cleanupUploadedFile } = require('../config/cloudinaryConfig');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const initiatePaystackPayment = require('../utils/payment');
 
 const patientController = {
     // Create new patient
@@ -70,13 +71,63 @@ const patientController = {
             $push: { patients: patient._id }
         });
 
-        res.status(201).json({
-            success: true,
-            message: 'Patient registered successfully',
-            data: patient
-        });
+        req.flash('message', `${patient.firstName + ' ' + patient.lastName} Account has been registered successfully`);
+        req.flash('status', 'success');
+        res.redirect(`/login`)
+       
     },
+    async admite_DischargePatient(req, res){
+        try {
+            const {action, patientId, facilityId}= req.params
+            // const {dischargeDate, totalAmount} = res.body
 
+            const patient = await Patient.findById(patientId);
+            const facility = await Hospitals.findById(facilityId);
+
+
+            if (action === 'admit') {
+                const patientcurrentAdmission = patient.currentAdmission.isAdmitted;
+                
+                if (patientcurrentAdmission) {
+                    req.flash('message', `${patient.firstName + ' ' + patient.lastName} is already admittented at ${facility.name}. contact facility to diacharge patient.`);
+                    req.flash('status', 'danger');
+                    res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._d}`)
+                }
+               const patientAlreadyAdmited = facility.patients.includes(patient._id)
+               if (!patientAlreadyAdmited) {
+                    facility.patients.push(patient._id)
+                    await facility.save();
+
+                    patient.currentAdmission.isAdmitted = true;
+                    patient.currentAdmission.hospital = facility._id;
+                    patient.currentAdmission.admissionDate = new Date();
+
+                    patient.registeredHospitals.push({
+                    hospital: facility._id,
+                    registrationDate: new Date()
+                    })
+
+                    await patient.save();
+                    req.flash('message', `${patient.firstName + ' ' + patient.lastName} has been admittented successfully`);
+                    req.flash('status', 'success');
+                    res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`)
+
+               }
+            }else{
+                  // Initialize payment for patient 
+            // const initializePayment = await initiatePaystackPayment(patient.email, 300, patient);
+
+            //     patient.currentAdmission.isAdmitted = false;
+            //     patient.currentAdmission.hospital = facility._id;
+            //     patient.currentAdmission.admissionDate = new Date();
+            }
+            
+        } catch (error) {
+            console.error('Patient Discharge error error:', error);
+            req.flash('message', `An error occurred during registration. Please try again.`);
+            req.flash('status', 'danger');
+        }
+    },
     // Update patient information
     async updatePatient(req, res) {
         const { patientId } = req.params;

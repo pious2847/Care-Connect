@@ -38,12 +38,12 @@
                                                         <% } %>
 
                                                             <% if (patient.currentAdmission.isAdmitted) { %>
-                                                                <a href=""
+                                                                <a href="/dashboard/<%= accountType %>/<%= account._id %>/patient/<%= patient._id %>/Discharge"
                                                                     class="btn btn-outline-warning mt-4">Discharge
                                                                     Patient</a>
                                                                 <% } else { %>
 
-                                                                    <a href=""
+                                                                    <a href="/dashboard/<%= accountType %>/<%= account._id %>/patient/<%= patient._id %>/admit"
                                                                         class="btn btn-outline-warning mt-4">Admitte
                                                                         Patient</a>
                                                                     <% } %>
