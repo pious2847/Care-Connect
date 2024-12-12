@@ -30,6 +30,9 @@ const hospitalRouter = require('./router/hospitalrouter')
 const pharmacyRouter = require('./router/phamarcyrouter')
 const PatientsRouter = require('./router/patients')
 const AppointmentRouter = require('./router/appointment')
+const drugsRouter = require('./router/drugs.router');
+const salesRouter = require('./router/sales.router');
+
 
 // Error handlers
 const notFoundHandler = require('./handlers/404');
@@ -151,7 +154,8 @@ app.use(hospitalRouter)
 app.use(pharmacyRouter)
 app.use(AppointmentRouter)
 app.use(PatientsRouter)
-
+app.use('/drugs', drugsRouter);
+app.use('/sales', salesRouter);
 
 // Error handling middleware stack
 app.use(notFoundHandler);

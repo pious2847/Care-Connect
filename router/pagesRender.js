@@ -21,6 +21,15 @@ router.get('/dashboard/:accountType/:Id/pharmacies', isServiceOwner, RenderPages
 router.get('/dashboard/:accountType/:Id/hospitals', isServiceOwner, RenderPages.getAllRegisteredHopitals)
 router.get('/dashboard/:accountType/:Id/patient/:patientId',  RenderPages.getPatient)
 
+// dashboard routes for phamarcy
+
+router.get('/dashboard/:accountType/:Id/supplies',  RenderPages.getAllPharmacyDrugs)
+router.get('/dashboard/:accountType/:Id/sales',  RenderPages.getAllPharmacySales)
+// router.post('/dashboard/:accountType/:Id/pharmacies/:pharmacyId/staffs', isServiceOwner, RenderPages.addPharmacyStaff)
+// router.post('/dashboard/:accountType/:Id/pharmacies/:pharmacyId/appointments', isServiceOwner, RenderPages.addPharmacyAppointment)
+// router.post('/dashboard/:accountType/:Id/pharmacies/:pharmacyId/patients', isServiceOwner, RenderPages.addPharmacyPatient)
+// router.delete('/dashboard/:accountType/:Id/pharmacies/:pharmacyId', isServiceOwner, RenderPages.deletePharmacy)
+
 
 module.exports = router
 

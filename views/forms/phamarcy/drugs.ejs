@@ -1,0 +1,126 @@
+<!-- Add/Update Drug Modal -->
+<div class="modal fade" id="drugModal" tabindex="-1" role="dialog" aria-labelledby="drugModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="drugModalLabel">Add/Update Drug</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="drugForm" class="needs-validation" novalidate action="/drugs/create" method="post">
+                <input type="hidden" id="drugId" name="drugId">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <!-- Drug Information -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Drug Details</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Drug Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <div class="invalid-feedback">Please enter drug name.</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="unitPrice" class="form-label">Unit Price</label>
+                                    <input type="number" class="form-control" id="unitPrice" name="unitPrice" min="0" step="0.01" required>
+                                    <div class="invalid-feedback">Please enter unit price.</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="quantityInStock" class="form-label">Quantity in Stock</label>
+                                    <input type="number" class="form-control" id="quantityInStock" name="quantityInStock" min="0" required>
+                                    <div class="invalid-feedback">Please enter quantity in stock.</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="description" class="form-label">Description (Optional)</label>
+                                    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Supplier Information -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Supplier Details</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="supplierName" class="form-label">Supplier Name</label>
+                                    <input type="text" class="form-control" id="supplierName" name="supplier[name]">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="supplierContact" class="form-label">Supplier Contact</label>
+                                    <input type="text" class="form-control" id="supplierContact" name="supplier[contact]">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="supplierAddress" class="form-label">Supplier Address</label>
+                                    <input type="text" class="form-control" id="supplierAddress" name="supplier[address]">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary w-100" id="drugSubmitBtn">Add Drug</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    (() => {
+        'use strict';
+        const form = document.getElementById('drugForm');
+        const modalTitle = document.getElementById('drugModalLabel');
+        const submitBtn = document.getElementById('drugSubmitBtn');
+
+        // Form validation
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            form.classList.add('was-validated');
+        }, false);
+
+        // Function to populate form for update
+        function populateDrugForm(drug) {
+            modalTitle.textContent = 'Update Drug';
+            submitBtn.textContent = 'Update Drug';
+            form.action = `/drugs/update/${drug._id}`;
+            form.method = 'POST';
+
+            // Populate fields
+            document.getElementById('drugId').value = drug._id;
+            document.getElementById('name').value = drug.name;
+            document.getElementById('unitPrice').value = drug.unitPrice;
+            document.getElementById('quantityInStock').value = drug.quantityInStock;
+            document.getElementById('description').value = drug.description || '';
+
+            // Populate supplier details
+            document.getElementById('supplierName').value = drug.supplier?.name || '';
+            document.getElementById('supplierContact').value = drug.supplier?.contact || '';
+            document.getElementById('supplierAddress').value = drug.supplier?.address || '';
+        }
+
+        // Function to reset form for adding
+        function resetDrugForm() {
+            modalTitle.textContent = 'Add Drug';
+            submitBtn.textContent = 'Add Drug';
+            form.action = '/drugs/create';
+            form.method = 'POST';
+
+            // Reset all fields
+            form.reset();
+            document.getElementById('drugId').value = '';
+        }
+
+        // Expose functions to global scope for external calling
+        window.populateDrugForm = populateDrugForm;
+        window.resetDrugForm = resetDrugForm;
+    })();
+</script>
