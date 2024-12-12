@@ -1,19 +1,121 @@
-const User = require('../models/user')
+const Hospitals = require('../models/hospitals');
+const Pharmacies = require('../models/pharmacy');
+const Staffs = require('../models/staffs');
+const Patient = require('../models/patients');
 
-// Check if user is logged in
-const isLoggedIn = (req, res, next) => {
-  if (req.session && req.session.userId) {
-    // User is logged in
-    next();
-  } else {
-    // User is not logged in, redirect to login page or handle the unauthorized access
-    req.flash("alertMessage", "Please login to acess page");
-    req.flash("alertStatus", "danger");
-    req.flash('message', {type: 'danger', text: ''})
-    res.redirect('/login');
+const isLoggedIn = async (req, res, next) => {
+  try {
+    // Check if session exists and has necessary information
+    if (req.session && req.session.accountId && req.session.accountType) {
+      let account;
+
+      // Determine the model based on account type
+      switch (req.session.accountType) {
+        case 'hospitals':
+          account = await Hospitals.findById(req.session.accountId);
+          break;
+        case 'pharmacies':
+          account = await Pharmacies.findById(req.session.accountId);
+          break;
+        case 'staff':
+          account = await Staffs.findById(req.session.accountId);
+          break;
+        case 'patient':
+          account = await Patient.findById(req.session.accountId);
+          break;
+        default:
+          throw new Error('Invalid account type');
+      }
+
+      // Check if account exists
+      if (account) {
+        // Attach the account to the request for further use if needed
+        req.user = account;
+        req.accountType = req.session.accountType;
+
+        return next();
+      }
+    }
+
+    // If no valid session or account found
+    req.flash("message", "Please login to access the page");
+    req.flash("status", "danger");
+    return res.redirect('/login');
+
+  } catch (error) {
+    console.error('Authentication error:', error);
+    req.flash("message", "An error occurred. Please login again");
+    req.flash("status", "danger");
+    return res.redirect('/login');
   }
 };
 
+const isServiceOwner = async (req, res, next) => {
+  try {
+    // Check if session exists and has necessary information
+    if (req.session && req.session.accountId && req.session.accountType) {
+      let account;
+
+      // Determine the model based on account type
+      switch (req.session.accountType) {
+        case 'hospitals':
+          account = await Hospitals.findById(req.session.accountId);
+          break;
+        case 'pharmacies':
+          account = await Pharmacies.findById(req.session.accountId);
+          break;
+        case 'staff':
+          account = await Staffs.findById(req.session.accountId);
+          break;
+        case 'patient':
+          account = await Patient.findById(req.session.accountId);
+          break;
+        default:
+          throw new Error('Invalid account type');
+      }
+
+      // Check if account exists
+      if (account && account.isOwner === true) {
+        // Attach the account to the request for further use if needed
+        req.user = account;
+        req.accountType = req.session.accountType;
+
+        return next();
+      }
+    }
+
+    // If no valid session or account found
+    req.flash("message", "Please login as Admin access the page");
+    req.flash("status", "danger");
+    return res.redirect('/login');
+
+  } catch (error) {
+    console.error('Authentication error:', error);
+    req.flash("message", "An error occurred. Please login again");
+    req.flash("status", "danger");
+    return res.redirect('/login');
+  }
+};
+const preventLoggedInAccess = (req, res, next) => {
+  // Check if user is already logged in
+  if (req.session && req.session.accountId && req.session.accountType) {
+    // Redirect to appropriate dashboard based on account type
+    const accountType = req.session.accountType;
+    const accountId = req.session.accountId;
+
+    // Flash a message about already being logged in
+    req.flash('message', 'You are already logged in');
+    req.flash('status', 'info');
+
+    // Redirect to the corresponding dashboard
+    return res.redirect(`/dashboard/${accountType}/${accountId}`);
+  }
+
+  // If not logged in, proceed to the login page
+  next();
+};
+
+module.exports = preventLoggedInAccess;
 // Check if user is an admin
 const isAdmin = (req, res, next) => {
   if (req.session && req.session.userId) {
@@ -39,23 +141,5 @@ const isAdmin = (req, res, next) => {
   }
 };
 
-// Protect a route with JWT authentication middleware
-const authenticateJWT = (req, res, next) => {
-    const token = req.session.token;
-  
-    if (!token) {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-  
-    jwt.verify(token, 'your-secret-key', (err, decodedToken) => {
-      if (err) {
-        return res.status(403).json({ message: 'Invalid token' });
-      }
-  
-      // Attach the user ID to the request object
-      req.userId = decodedToken.userId;
-      next();
-    });
-  }
 
-module.exports = { isLoggedIn, isAdmin,authenticateJWT };
+module.exports = { isServiceOwner,isLoggedIn, isAdmin,preventLoggedInAccess };

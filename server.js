@@ -97,8 +97,8 @@ io.on('connection', (socket) => {
 // Session configuration
 const sessionConfig = {
   secret: 'Secret_Key',
-  resave: true,
-  saveUninitialized: true,
+  resave: false,
+  saveUninitialized: false,
   store: MongoStore.create({
     mongoUrl: process.env.DBConnectionLink
   })

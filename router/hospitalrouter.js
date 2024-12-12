@@ -3,9 +3,10 @@ const router = express.Router();
 const hospitalController = require('../controller/hospitalsControllers')
 const upload = require('../config/multer_file_uploader');
 const MecicalRecordsController = require('../controller/medicalrecords.controller');
+const preventLoggedInAccess = require('../middleware/auth');
 
 
-router.post('/hospital/register', upload.fields([
+router.post('/hospital/register',upload.fields([
     {name: 'logo', maxCount: 1}
 ]), hospitalController.createHospital)
 

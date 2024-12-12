@@ -111,7 +111,7 @@ const generateFacilityWelcomeMessage = (organization, paymentDetails) => {
 
     <div style="background-color: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0;">
         <h2 style="color: #1e40af; margin-top: 0;">Payment Information</h2>
-        <p><strong>Payment ID:</strong> ${paymentDetails.payment_id}</p>
+        <p><strong>Payment ID:</strong> ${paymentDetails.reference}</p>
         <p><strong>Complete Payment:</strong> <a href="${paymentDetails.authorization_url}" style="color: #2563eb;">Click here to complete your payment</a></p>
         <p style="color: #dc2626; font-size: 0.9em;">Please complete your payment to activate your subscription.</p>
     </div>
