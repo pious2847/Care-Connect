@@ -78,6 +78,7 @@ const patientController = {
         res.redirect(`/login`)
 
     },
+
     async admite_DischargePatient(req, res) {
         // console.log('async admite_request made', req)
         try {
@@ -176,35 +177,58 @@ const patientController = {
             req.flash('status', 'danger');
         }
     },
-    // Search patient by name and email address
+
     async searchPatient(req, res) {
         try {
             const { query } = req.query;
             const { Id, accountType, patientId } = req.params;
             const alertMessage = req.flash("message");
             const alertStatus = req.flash("status");
-
             const alert = { message: alertMessage, status: alertStatus };
-
-            // Split the query into first and last name
-            const [firstName, ...lastName] = query.split(' ');
-            
-            // Search for patients by first name, last name, and email
-            const patients = await Patient.find({
-                $or: [
-                    { firstName: { $regex: new RegExp(firstName, 'i') } },
-                    { lastName: { $regex: new RegExp(lastName.join(' '), 'i') } },
-                    { 'contact.email': { $regex: new RegExp(query, 'i') } }
-                ]
+    
+               
+            // Improved search logic
+            const searchConditions = [
+                { firstName: { $regex: new RegExp(query, 'i') } },
+                { lastName: { $regex: new RegExp(query, 'i') } },
+                { 'contact.email': { $regex: new RegExp(query, 'i') } }
+            ];
+    
+            // If the query contains a space, try to split and search by first and last name
+            if (query.includes(' ')) {
+                const [firstName, ...lastNameParts] = query.split(' ');
+                const lastName = lastNameParts.join(' ');
+                
+                searchConditions.push(
+                    { 
+                        $and: [
+                            { firstName: { $regex: new RegExp(firstName, 'i') } },
+                            { lastName: { $regex: new RegExp(lastName, 'i') } }
+                        ]
+                    }
+                );
+            }
+    
+            // Search for patients
+            const patients = await Patient.find({ 
+                $or: searchConditions 
             }).populate('registeredHospitals.hospital');
+    
             let account = null;
             if (Id) {
                 account = await Hospitals.findById(Id)
                     .populate('staffs')
                     .populate('appointments')
-                    .populate('patients')
+                    .populate('patients');
             }
-            res.render('./Dashboard/patientsearch', { patients, accountType, account, alert });
+    
+            res.render('./Dashboard/patientsearch', { 
+                patients, 
+                accountType, 
+                account, 
+                alert, 
+                query 
+            });
         } catch (error) {
             console.error('Error searching patients:', error);
             res.status(500).json({ message: 'Error searching patients' });

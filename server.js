@@ -27,6 +27,7 @@ const ejs = require('ejs');
 const pagesRender = require('./router/pagesRender');
 const staffRouter = require('./router/staffrouter');
 const hospitalRouter = require('./router/hospitalrouter')
+const pharmacyRouter = require('./router/phamarcyrouter')
 const PatientsRouter = require('./router/patients')
 const AppointmentRouter = require('./router/appointment')
 
@@ -147,8 +148,10 @@ require('./database/dbConfig')();
 app.use('/',pagesRender);
 app.use(staffRouter)
 app.use(hospitalRouter)
+app.use(pharmacyRouter)
 app.use(AppointmentRouter)
 app.use(PatientsRouter)
+
 
 // Error handling middleware stack
 app.use(notFoundHandler);

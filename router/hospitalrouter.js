@@ -12,4 +12,6 @@ router.post('/hospital/register', upload.fields([
 router.post('/medical-records/create', MecicalRecordsController.createMedicalRecord)
 router.post('/login', hospitalController.login);
 
+router.get('/logout', hospitalController.logout);
+
 module.exports = router
