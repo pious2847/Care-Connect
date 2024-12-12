@@ -1,5 +1,5 @@
 <div class="col">
-  <div class="welcome mb-4 mt-5">
+  <div class="welcome mb-4 mt-4">
     <h4 class="text-primary font-monospace">My Dashboard</h4>
     <p class="small">A brief summary of facility account </p>
   </div>
@@ -34,13 +34,26 @@
       <div class="card-item rounded-lg shadow-sm p-4">
         <div class="card-title">
           <h4 class="text-danger">
+            Patients
+          </h4>
+        </div>
+        <div class="card-value-wrapper">
+          <div
+            class="focus-ring-light focus-ring card-value rounded-full border-4 border-yellow-400 w-12 h-12 flex items-center justify-center text-lg font-medium">
+            <%= account.patients.length %>
+          </div>
+        </div>
+      </div>
+      <div class="card-item rounded-lg shadow-sm p-4">
+        <div class="card-title">
+          <h4 class="text-info">
             Reviews
           </h4>
         </div>
         <div class="card-value-wrapper">
           <div
             class="focus-ring-light focus-ring card-value rounded-full border-4 border-yellow-400 w-12 h-12 flex items-center justify-center text-lg font-medium">
-            30
+            <%= account.reviews.length %>
           </div>
         </div>
       </div>
@@ -69,7 +82,7 @@
           backgroundColor: [
             '#4299e1', // Blue
             '#48bb78', // Green
-            '#e6c65b' , // Yellow
+            '#e6c65b', // Yellow
             '#9b4df5'   //Violet
           ],
           borderColor: [

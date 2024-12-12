@@ -6,39 +6,41 @@ const { generateAppointmentEmail, generateFacilityAppointmentEmail } = require("
 
 const AppointmentController = {
     async getmeeting(req, res)  {
-        const {roomId} = req.params
-       
-        const appointment = await Appointments.findById(roomId).populate('facility');
-        console.log(appointment)
-        let facility = appointment.facility;
-
-        console.log(facility);
-        
-        // if(appointment.facility){
-        //     facility = await Hospitals.findById(appointment.facility);
-        //     if(!facility){
-        //         facility = await Pharmacies.findById(appointment.facility)
-        //     }
-        //  }
-
-         if(!facility){
-            req.flash('message', `Unable to book appointment because facility cant be found`);
-            req.flash('status', 'danger');
-            res.redirect('/')
-         }
-         console.log('Facility', facility)
-
-        const meeting =
-        {
-            title: `Appointment with ${facility.name}`,
-            date: appointment.date,
-            startTime: appointment.time,
-            duration: 30,
-            organizer: facility.name,
-            roomId: appointment._id,
-            description: appointment.message
-        }
+      
         try {
+            const {roomId} = req.params
+       
+            const appointment = await Appointments.findById(roomId).populate('facility');
+           
+            let facility = appointment.facility;
+    
+       
+             if(!facility){
+                req.flash('message', `Unable to book appointment because facility cant be found`);
+                req.flash('status', 'danger');
+                res.redirect('/')
+             }
+            
+    
+            const meeting =
+            {
+                title: `Appointment with ${facility.name}`,
+                date: appointment.date,
+                startTime: appointment.time,
+                duration: 30,
+                organizer: facility.name,
+                roomId: appointment._id,
+                description: appointment.message
+            }
+            if(!appointment){
+                req.flash('message', `Unable to book appointment because appointment cant be found`);
+                req.flash('status', 'danger');
+                res.redirect('/')
+            }
+            // Update appointment status
+            appointment.isAttended = true;
+            await appointment.save();
+
             res.render('./meeting/room', { meeting })
         } catch (error) {
             console.error(error.message)

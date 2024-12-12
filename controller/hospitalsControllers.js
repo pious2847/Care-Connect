@@ -5,7 +5,6 @@ const initiatePaystackPayment = require('../utils/payment');
 const Pharmacies = require('../models/pharmacy');
 const staffs = require('../models/staffs');
 const patients = require('../models/patients');
-const alert = require('../utils/alert');
 const { generateFacilityWelcomeMessage } = require('../utils/messages');
 const { sendEmail } = require('../utils/MailSender');
 
@@ -136,6 +135,32 @@ const hospitalController = {
             return res.redirect('/login');
         }
     },
+    async logout(req, res) {
+        try {
+            // Destroy the user's session
+            req.session.destroy((err) => {
+                if (err) {
+                    console.error('Error destroying session:', err);
+                    req.flash('message', 'Failed to log out. Please try again.');
+                    req.flash('status', 'danger');
+                    return res.redirect('/login');
+                }
+    
+                // Clear the cookie that stores the session ID
+                res.clearCookie('connect.sid', { path: '/' });
+    
+                // Redirect to the login page or send a success response
+                req.flash('message', 'Logged out successfully.');
+                req.flash('status', 'success');
+                return res.redirect('/login');
+            });
+        } catch (error) {
+            console.error('Logout error:', error);
+            req.flash('message', 'An unexpected error occurred during logout');
+            req.flash('status', 'danger');
+            return res.redirect('/login');
+        }
+    }, 
     async getAllHospital(req, res) {
         try {
             const Hospital = await Hospitals.find().populate('Staffs');

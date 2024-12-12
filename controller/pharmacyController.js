@@ -1,4 +1,9 @@
 const Phamarcy = require('../models/pharmacy')
+const { generateFacilityWelcomeMessage } = require('../utils/messages');
+const { sendEmail } = require('../utils/MailSender');
+const { cloudinary, cleanupUploadedFile } = require('../config/cloudinaryConfig');
+const bcrypt = require('bcrypt')
+const initiatePaystackPayment = require('../utils/payment');
 
 const PhamarcyController = {
     async createPhamarcies(req, res) {
@@ -6,8 +11,10 @@ const PhamarcyController = {
             const { name, username, email, contact, ambulancecontact, address, walletnumber, walletname, bio, password } = req.body;
             const existingPhamarcies = await Phamarcy.find({ email: new RegExp(`^${email}$`, 'i') });
 
-            if (existingPhamarcies.length > 0) {  // Changed condition to check length
-                return res.status(400).json({ message: 'Email already registered With Another Phamarcies' });
+            if (existingPhamarcies.length > 0) {  
+                req.flash('message', `Email already registered With Another Phamarcy`);
+                req.flash('status', 'danger');
+                res.redirect('/register/pharmacy')
             }
 
             let logoUrl = null;
@@ -50,19 +57,20 @@ const PhamarcyController = {
             // Save the Phamarcies
             await newPhamarcies.save();
 
-            // Return success response with payment details
-            return res.status(201).json({
-                success: true,
-                message: "Phamarcies account registered successfully. Please complete subscription to continue",
-                paymentDetails: initializePayment
-            });
+            const message = generateFacilityWelcomeMessage(newPhamarcies,initializePayment )
+
+            await sendEmail(email, 'Facility account registeration', message )
+            req.flash('message', `${newPhamarcies.name}! account registered successfully. Please complete subscription to continue`);
+            req.flash('status', 'success');
+
+            res.redirect('/login')
+           
 
         } catch (error) {
             console.error('Phamarcies registration error:', error);
-            return res.status(500).json({
-                success: false,
-                message: "An error occurred during registration. Please try again."
-            });
+            req.flash('message', `An error occurred during registration. Please try again.`);
+            req.flash('status', 'danger');
+            res.redirect('/register/pharmacy');
         }
     },
     async getAllPhamarcies(req, res){

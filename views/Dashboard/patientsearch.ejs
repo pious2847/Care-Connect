@@ -17,19 +17,27 @@
 
 
                             <div class="contentwrapper">
-                                <!-- Creating a flexible responsive container for patients cards  -->
-                                 <div class="row">
+                                <div class="col">
+                                    <div class="row justify-content-between align-items-center mb-5">
+                                        <p class="lead">Search results for: <span class="text-uppercase  text-primary"><%= query %></span></p>
+                                        <%- include('../forms/search/patient',{query}) %>
+                                    </div>
+
+                                      <!-- Creating a flexible responsive container for patients cards  -->
+                                 <div class="row justify-content-center">
                                     <% if (patients && patients.length > 0) { %>
                                         <% patients.forEach(patient => { %>
                                          <%- include('../components/patientCards', {patient}) %>
                                         <% }) %>
                                         <% } else { %>
                                              <div class="col-12">
-                                                 <h2 class="text-center">No patients found.</h2>
+                                                 <p class="text-center">No patients found.</p>
                                              </div>
                                             <% } %>
                                      
                                  </div>
+                                </div>
+                              
                                
                             </div>
                     </div>
