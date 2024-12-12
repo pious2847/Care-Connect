@@ -29,6 +29,12 @@
                     <span class="link-text">Sales</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/<%= account._id %>/sales" class="nav-link">
+                    <i class='bx bx-line-chart-down'></i>
+                    <span class="link-text">Low Stock <span class="badge focus-ring-primary">42</span></span>
+                </a>
+            </li>
         <% } %>
         <% if (accountType === 'hospitals') { %>
             <li class="nav-item">
