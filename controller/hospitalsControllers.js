@@ -96,7 +96,7 @@ const hospitalController = {
                 req.flash('status', 'danger');
                 return res.redirect('/login');
             }
-
+            
             if (!account.password) {
                 req.flash('message', 'Invalid account data. Please check your email and  password.');
                 req.flash('status', 'danger');
@@ -149,9 +149,7 @@ const hospitalController = {
                 // Clear the cookie that stores the session ID
                 res.clearCookie('connect.sid', { path: '/' });
     
-                // Redirect to the login page or send a success response
-                req.flash('message', 'Logged out successfully.');
-                req.flash('status', 'success');
+               
                 return res.redirect('/login');
             });
         } catch (error) {

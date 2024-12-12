@@ -164,7 +164,7 @@ const patientController = {
                 await patient.save();
 
                 await sendEmail(facility.email, 'Patient Discharge Payment (service charges)', facilityMessage)
-                await sendEmail(patient.contact.email, 'Patient Discharge Payment (service charges)', patientMessage)
+                await sendEmail(patient.contact.email, `${patient.firstName} ${patient.lastName} Medical Bill `, patientMessage)
 
                 req.flash('message', `${patient.firstName + ' ' + patient.lastName} has been discharged successfully`);
                 req.flash('status', 'success');

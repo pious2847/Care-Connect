@@ -53,7 +53,7 @@ const PhamarcyController = {
 
             // Initialize payment before saving
             const initializePayment = await initiatePaystackPayment(email, 300, newPhamarcies);
-
+            
             // Save the Phamarcies
             await newPhamarcies.save();
 

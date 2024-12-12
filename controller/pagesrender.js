@@ -59,6 +59,7 @@ const RenderPages = {
     },
     async getLogin(req, res) {
         try {
+            
             const alertMessage = req.flash("message");
             const alertStatus = req.flash("status");
 
@@ -134,7 +135,7 @@ const RenderPages = {
                 if (!account) {
                     account = await Pharmacies.findById(Id)
                         .populate('staffs')
-                        .populate('appointments')
+                        
                     if (!account) {
                         account = await staffs.findById(Id)
                             .populate({
@@ -147,7 +148,6 @@ const RenderPages = {
                 }
             }
 
-            console.log("account", account)
             res.render('./Dashboard/dashboard', { account, accountType, alert })
         } catch (error) {
             console.error(error.message);
