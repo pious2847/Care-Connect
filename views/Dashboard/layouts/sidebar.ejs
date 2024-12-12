@@ -16,6 +16,20 @@
                 <span class="link-text">Dashboard</span>
             </a>
         </li>
+        <% if (accountType === 'pharmacies') { %>
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/<%= account._id %>/supplies" class="nav-link">
+                    <i class='bx bxs-truck'></i>
+                    <span class="link-text">Supplies</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/<%= account._id %>/sales" class="nav-link">
+                    <i class='bx bx-wallet-alt' ></i>
+                    <span class="link-text">Sales</span>
+                </a>
+            </li>
+        <% } %>
         <% if (accountType === 'hospitals') { %>
             <li class="nav-item">
                 <a href="/dashboard/<%= accountType %>/<%= account._id %>/staffs" class="nav-link">

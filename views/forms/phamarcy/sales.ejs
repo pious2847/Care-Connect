@@ -1,0 +1,270 @@
+<!-- Add/Update Sale Modal -->
+<div class="modal fade" id="saleModal" tabindex="-1" role="dialog" aria-labelledby="saleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="saleModalLabel">Add/Update Sale</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="saleForm" class="needs-validation" novalidate action="/sales/create" method="post">
+                <input type="hidden" id="saleId" name="saleId">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <!-- Customer Information -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Customer Details</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="customerName" class="form-label">Customer Name</label>
+                                    <input type="text" class="form-control" id="customerName" name="customerName">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="customerContact" class="form-label">Customer Contact</label>
+                                    <input type="text" class="form-control" id="customerContact" name="customerContact">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Drugs Sold -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Drugs Sold</h5>
+                            <div id="drugsContainer">
+                                <div class="drug-row mb-3">
+                                    <div class="row">
+                                        <div class="col-md-4 mb-2">
+                                            <label class="form-label">Drug</label>
+                                            <select class="form-control" name="drugs[0][drugId]" required>
+                                                <option value="">Select Drug</option>
+                                                <% drugs.forEach(drug => { %>
+                                                    <option value="<%= drug._id %>"><%= drug.name %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label class="form-label">Quantity</label>
+                                            <input type="number" class="form-control" name="drugs[0][quantity]" min="1" required>
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label class="form-label">Unit Price</label>
+                                            <input type="number" class="form-control" name="drugs[0][unitPrice]" min="0" step="0.01" required>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <label class="form-label">Subtotal</label>
+                                            <input type="number" class="form-control subtotal" readonly>
+                                        </div>
+                                        <div class="col-md-1 mb-2 d-flex align-items-end">
+                                            <button type="button" class="btn btn-danger remove-drug">-</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right mb-3">
+                                <button type="button" id="addDrug" class="btn btn-secondary">+ Add Drug</button>
+                            </div>
+                        </div>
+
+                        <!-- Payment Details -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Payment Details</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="paymentMethod" class="form-label">Payment Method</label>
+                                    <select class="form-control" id="paymentMethod" name="paymentMethod">
+                                        <option value="Cash">Cash</option>
+                                        <option value="Card">Card</option>
+                                        <option value="Mobile Money">Mobile Money</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="totalPrice" class="form-label">Total Price</label>
+                                    <input type="number" class="form-control" id="totalPrice" name="totalPrice" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary w-100" id="saleSubmitBtn">Add Sale</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Previous modal content remains the same -->
+<script>
+    (() => {
+        'use strict';
+        const form = document.getElementById('saleForm');
+        const modalTitle = document.getElementById('saleModalLabel');
+        const submitBtn = document.getElementById('saleSubmitBtn');
+        const drugsContainer = document.getElementById('drugsContainer');
+        const addDrugButton = document.getElementById('addDrug');
+        const totalPriceInput = document.getElementById('totalPrice');
+        let drugIndex = 1;
+
+        // Form validation
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            form.classList.add('was-validated');
+        }, false);
+
+        // Dynamic drug row addition
+        addDrugButton.addEventListener('click', () => {
+            const newRow = document.createElement('div');
+            newRow.classList.add('drug-row', 'mb-3');
+            newRow.innerHTML = `
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <select class="form-control" name="drugs[${drugIndex}][drugId]" required>
+                            <option value="">Select Drug</option>
+                            <% drugs.forEach(drug => { %>
+                                <option value="<%= drug._id %>"><%= drug.name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input type="number" class="form-control" name="drugs[${drugIndex}][quantity]" min="1" required>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <input type="number" class="form-control" name="drugs[${drugIndex}][unitPrice]" min="0" step="0.01" required>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="number" class="form-control subtotal" readonly>
+                    </div>
+                    <div class="col-md-1 mb-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger remove-drug">-</button>
+                    </div>
+                </div>
+            `;
+            drugsContainer.appendChild(newRow);
+            drugIndex++;
+
+            // Add event listeners to new row
+            setupDrugRowListeners(newRow);
+        });
+
+        // Setup event listeners for drug rows
+        function setupDrugRowListeners(row) {
+            // Remove drug row
+            row.querySelector('.remove-drug').addEventListener('click', () => {
+                drugsContainer.removeChild(row);
+                calculateTotalPrice();
+            });
+
+            // Calculate subtotal and total price
+            const quantityInput = row.querySelector('input[name$="[quantity]"]');
+            const unitPriceInput = row.querySelector('input[name$="[unitPrice]"]');
+            const subtotalInput = row.querySelector('.subtotal');
+
+            function calculateSubtotal() {
+                const quantity = parseFloat(quantityInput.value) || 0;
+                const unitPrice = parseFloat(unitPriceInput.value) || 0;
+                subtotalInput.value = (quantity * unitPrice).toFixed(2);
+                calculateTotalPrice();
+            }
+
+            quantityInput.addEventListener('input', calculateSubtotal);
+            unitPriceInput.addEventListener('input', calculateSubtotal);
+        }
+
+        // Initial setup for existing drug row
+        setupDrugRowListeners(drugsContainer.querySelector('.drug-row'));
+
+        // Calculate total price
+        function calculateTotalPrice() {
+            const subtotalInputs = form.querySelectorAll('.subtotal');
+            let total = 0;
+            subtotalInputs.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            totalPriceInput.value = total.toFixed(2);
+        }
+
+        // Function to reset all drug rows except the first
+        function clearAdditionalDrugRows() {
+            const rows = drugsContainer.querySelectorAll('.drug-row');
+            for (let i = 1; i < rows.length; i++) {
+                drugsContainer.removeChild(rows[i]);
+            }
+            drugIndex = 1;
+        }
+
+        // Function to populate form for update
+        function populateSaleForm(sale) {
+            // Reset the form first
+            resetSaleForm();
+
+            // Set modal title and submit button
+            modalTitle.textContent = 'Update Sale';
+            submitBtn.textContent = 'Update Sale';
+            form.action = `/sales/update/${sale._id}`;
+            form.method = 'POST';
+
+            // Populate hidden sale ID
+            document.getElementById('saleId').value = sale._id;
+
+            // Populate customer details
+            document.getElementById('customerName').value = sale.customerName || '';
+            document.getElementById('customerContact').value = sale.customerContact || '';
+
+            // Populate payment method
+            document.getElementById('paymentMethod').value = sale.paymentMethod || 'Cash';
+
+            // Populate drugs
+            if (sale.drugs && sale.drugs.length > 0) {
+                // Populate first row
+                const firstRow = drugsContainer.querySelector('.drug-row');
+                firstRow.querySelector('select[name="drugs[0][drugId]"]').value = sale.drugs[0].drugId;
+                firstRow.querySelector('input[name="drugs[0][quantity]"]').value = sale.drugs[0].quantity;
+                firstRow.querySelector('input[name="drugs[0][unitPrice]"]').value = sale.drugs[0].unitPrice;
+                
+                // Add additional rows for remaining drugs
+                for (let i = 1; i < sale.drugs.length; i++) {
+                    addDrugButton.click(); // This creates a new row
+                    const newRow = drugsContainer.lastElementChild;
+                    
+                    newRow.querySelector('select[name$="[drugId]"]').value = sale.drugs[i].drugId;
+                    newRow.querySelector('input[name$="[quantity]"]').value = sale.drugs[i].quantity;
+                    newRow.querySelector('input[name$="[unitPrice]"]').value = sale.drugs[i].unitPrice;
+                }
+            }
+
+            // Set total price
+            totalPriceInput.value = sale.totalPrice.toFixed(2);
+        }
+
+        // Function to reset form for adding
+        function resetSaleForm() {
+            modalTitle.textContent = 'Add Sale';
+            submitBtn.textContent = 'Add Sale';
+            form.action = '/sales/create';
+            form.method = 'POST';
+
+            // Reset form fields
+            form.reset();
+            document.getElementById('saleId').value = '';
+
+            // Clear additional drug rows
+            clearAdditionalDrugRows();
+
+            // Reset to default payment method
+            document.getElementById('paymentMethod').value = 'Cash';
+
+            // Reset total price
+            totalPriceInput.value = '0.00';
+        }
+
+        // Expose functions to global scope for external calling
+        window.populateSaleForm = populateSaleForm;
+        window.resetSaleForm = resetSaleForm;
+    })();
+</script>

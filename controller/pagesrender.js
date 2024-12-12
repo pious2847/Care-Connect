@@ -59,7 +59,7 @@ const RenderPages = {
     },
     async getLogin(req, res) {
         try {
-            
+
             const alertMessage = req.flash("message");
             const alertStatus = req.flash("status");
 
@@ -135,7 +135,15 @@ const RenderPages = {
                 if (!account) {
                     account = await Pharmacies.findById(Id)
                         .populate('staffs')
-                        
+                        .populate('drugs')
+                        .populate({
+                            path: 'sales',
+                            populate: [
+                                { path: 'drugs.drugId', }
+                            ]
+                        });
+
+
                     if (!account) {
                         account = await staffs.findById(Id)
                             .populate({
@@ -258,20 +266,20 @@ const RenderPages = {
         const alert = { message: alertMessage, status: alertStatus };
 
         const patient = await Patients.findById(patientId)
-        .populate({
-            path: 'medicalRecords',
-            populate: [
-                {
-                    path: 'admitedBy',
-                    select: 'title firstname lastname email'
-                },
-                {
-                    path: 'hospital',
-                    select: 'name location'
-                }
-            ]
-        })
-        .populate('registeredHospitals.hospital');
+            .populate({
+                path: 'medicalRecords',
+                populate: [
+                    {
+                        path: 'admitedBy',
+                        select: 'title firstname lastname email'
+                    },
+                    {
+                        path: 'hospital',
+                        select: 'name location'
+                    }
+                ]
+            })
+            .populate('registeredHospitals.hospital');
 
         if (!patient.registeredHospitals.some(reg => reg.hospital._id.toString() === Id)) {
             console.log('Patient not found in this hospital');
@@ -282,14 +290,14 @@ const RenderPages = {
                 .populate('staffs')
                 .populate('appointments')
                 .populate('patients')
-                
+
         }
 
 
         res.render('./Dashboard/patientdetail', { account, alert, accountType, patient, patientId: patient._id, calculateAge: calculateAge })
 
     },
-    async getAllRegisteredPharmacy(req, res){
+    async getAllRegisteredPharmacy(req, res) {
         try {
             const alertMessage = req.flash("message");
             const alertStatus = req.flash("status");
@@ -322,13 +330,13 @@ const RenderPages = {
 
             const phamarcies = await Pharmacies.find()
 
-            res.render('./Dashboard/registerdPhamcies', {phamarcies, success: true, account, accountType, alert })
-        }catch(error) {
+            res.render('./Dashboard/registerdPhamcies', { phamarcies, success: true, account, accountType, alert })
+        } catch (error) {
             console.error(error.message);
             res.status(500).json({ success: false, message: error.message });
         }
     },
-    async getAllRegisteredHopitals(req, res){
+    async getAllRegisteredHopitals(req, res) {
         try {
             const alertMessage = req.flash("message");
             const alertStatus = req.flash("status");
@@ -361,13 +369,79 @@ const RenderPages = {
 
             const hospitals = await Hospitals.find()
 
-            res.render('./Dashboard/registeredHospitals', {hospitals, success: true, account, accountType, alert })
-        }catch(error) {
+            res.render('./Dashboard/registeredHospitals', { hospitals, success: true, account, accountType, alert })
+        } catch (error) {
+            console.error(error.message);
+            res.status(500).json({ success: false, message: error.message });
+        }
+    },
+    async getAllPharmacyDrugs(req, res) {
+        try {
+            const alertMessage = req.flash("message");
+            const alertStatus = req.flash("status");
+    
+            const alert = { message: alertMessage, status: alertStatus };
+    
+            const { Id, accountType } = req.params;
+    
+            let account = null;
+            if (Id) {
+                account = await Pharmacies.findById(Id)
+                .populate('staffs')
+                .populate('drugs') 
+                .populate({
+                    path: 'sales',
+                    populate: [
+                        { path: 'drugs.drugId' }
+                    ]
+                });
+            }
+    
+            res.render('./Dashboard/pharmarcydrugs', { 
+                success: true, 
+                account, 
+                accountType, 
+                alert 
+            })
+        } catch (error) {
+            console.error(error.message);
+            res.status(500).json({ success: false, message: error.message });
+        }
+    },
+    async getAllPharmacySales(req, res) {
+        try {
+            const alertMessage = req.flash("message");
+            const alertStatus = req.flash("status");
+    
+            const alert = { message: alertMessage, status: alertStatus };
+    
+            const { Id, accountType } = req.params;
+    
+            let account = null;
+            if (Id) {
+                account = await Pharmacies.findById(Id)
+                .populate('staffs')
+                .populate('drugs') 
+                .populate({
+                    path: 'sales',
+                    populate: [
+                        { path: 'drugs.drugId' }
+                    ]
+                });
+            }
+    
+            res.render('./Dashboard/phamarcysales', { 
+                success: true, 
+                account, 
+                accountType, 
+                alert ,
+                drugs: account.drugs
+            })
+        } catch (error) {
             console.error(error.message);
             res.status(500).json({ success: false, message: error.message });
         }
     }
-
 }
 
 module.exports = RenderPages;

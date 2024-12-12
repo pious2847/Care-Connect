@@ -86,6 +86,18 @@ const Pharmacieschema = new mongoose.Schema({
             type: mongoose.Schema.ObjectId,
             ref: "Reviews"
         }
+    ],
+    drugs:[
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Drug'
+        }
+    ],
+    sales:[
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Sale'
+        }
     ]
 
 }, {

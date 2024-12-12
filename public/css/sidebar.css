@@ -310,9 +310,14 @@
     .hospitalMetricsChart{
       width: 80%;
     }
+    .searchform{
+      width: 100%;
+    }
   }
 
-
+  .searchform{
+    width: 40%;
+  }
      /* Base table styles */
      .tablecontainer {
       overflow-x: auto;
