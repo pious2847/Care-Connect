@@ -52,8 +52,11 @@ const purchaseController = {
     }
   },
 
+
+};
+
   // Helper functions to handle different payment types
-  async handleSubscriptionPayment(metadata) {
+  async function  handleSubscriptionPayment(metadata)  {
     const { facilityId, subscriptionDetails } = metadata;
 
     const facility = await Hospitals.findById(facilityId) ||
@@ -68,9 +71,8 @@ const purchaseController = {
 
     const message = generateFacilitySubscriptionConfirmationMessage(facility, subscriptionDetails);
     await sendEmail(facility.email, 'Subscription Payment Confirmation', message);
-  },
-
-  async handleMedicalBillsPayment(metadata) {
+  }
+  async function handleMedicalBillsPayment(metadata) {
     const { patientmedicalrecords, facility, patientId } = metadata;
 
     const medicalRecords = await MedicalRecord.findById(patientmedicalrecords._id);
@@ -85,9 +87,9 @@ const purchaseController = {
 
     const message = generatePatientPaymentApprovedMessage(patient, medicalRecords.billingDetails, facility);
     await sendEmail(patient.contact.email, 'Medical Bill Payment Approved', message);
-  },
+  }
 
-  async handleServiceChargesPayment(metadata) {
+  async function handleServiceChargesPayment(metadata) {
     const { facilityId, patientId } = metadata;
 
     const patient = await Patient.findById(patientId);
@@ -106,7 +108,5 @@ const purchaseController = {
     const facilitymessage = generateFacilityPaymentApprovedMessage(facility, patient);
     await sendEmail(facility.email, 'Service Charges Payment Completed', facilitymessage);
   }
-
-};
 
 module.exports = purchaseController;
