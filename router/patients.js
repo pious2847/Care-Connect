@@ -9,7 +9,7 @@ router.post('/patients/register', upload.fields([
     {name: 'profilePicture', maxCount: 1}
 ]), patientController.createPatient);
 
-router.post('/dashboard/:facilityId/patient/:patientId/:action',  patientController.admite_DischargePatient)
+router.post('/dashboard/:facilityId/patient/:patientId/:action',  patientController.admitOrDischargePatient)
 router.get('/dashboard/:accountType/:Id/patients/search', patientController.searchPatient);
 
 

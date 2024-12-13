@@ -15,107 +15,98 @@ const purchaseController = {
   */
   async handlePaystackWebhook(req, res) {
     const secret = process.env.PAYSTACK_API_KEY;
-    const hash = crypto.createHmac('sha512', secret).update(JSON.stringify(req.body)).digest('hex');
 
+    // Signature verification
+    const hash = crypto.createHmac('sha512', secret).update(JSON.stringify(req.body)).digest('hex');
     if (hash !== req.headers['x-paystack-signature']) {
       return res.status(400).send('Invalid signature');
     }
 
     const event = req.body;
-
-    if (event.event === 'charge.success') {
-      const { metadata } = event.data;
-      const { paymenttype } = metadata;
-
-      try {
-
-        if (paymenttype === 'subscription') {
-          const { facilityId , subscriptionDetails} = metadata;
-
-
-          let facility = null
-
-          if (facilityId) {
-            facility = await Hospitals.findById(facilityId)
-          } else {
-            facility = await Pharmacies.findById()
-          }
-
-          if (facility) {
-            return res.status(404).send('Unable to find ficility ');
-          }
-          facility.subscriptionstatus = true
-
-          facility.save();
-
-          const message = generateFacilitySubscriptionConfirmationMessage(facility, subscriptionDetails );
-          await sendEmail(facility.email, 'Subscription payment Confirmation Approved Successful', message)
-
-          res.sendStatus(200);
-        }
-        if(paymenttype === 'medicalbills'){
-          const { patientmedicalrecords , facility, patientId} = metadata;
-
-          const medicalRecords = await MedicalRecord.findById(patientmedicalrecords._id);
-          const patient = await Patient.findById(patientId._id);
-
-          console.log('Patient',patient, patientId );
-          console.log('medicalRecords',medicalRecords);
-
-
-          medicalRecords.billingStatus = 'paid'
-          await medicalRecords.save();
-
-          console.log('patientmedicalrecords billingDetails,', patientmedicalrecords.billingDetails,)
-          console.log('medicalRecords billingDetails,', medicalRecords.billingDetails,)
-
-          const message = generatePatientPaymentApprovedMessage(patient, medicalRecords.billingDetails, facility);
-
-          await sendEmail(patient.contact.email, 'Your Medical Bill Payment Has Been Approved ', message)
-
-          res.sendStatus(200);
-        }
-        if(paymenttype ==='servicescharges'){
-          const { facilityId, patientId} = metadata;
-
-          const patient = await Patient.findById(patientId);
-
-          let facility = null
-
-          if (facilityId) {
-            facility = await Hospitals.findById(facilityId)
-          } else {
-            facility = await Pharmacies.findById()
-          }
-
-          if (facility) {
-            return res.status(404).send('Unable to find ficility ');
-          }
-
-          console.log("found patient", patient, patientId)
-
-          patient.currentAdmission.isAdmitted = false;
-          patient.currentAdmission.hospital = null;
-          patient.currentAdmission.admissionDate = null;
-
-          await patient.save();
-
-          const facilitymessage = generateFacilityPaymentApprovedMessage(facility,  patient, patientmedicalrecords.billingDetails);
-
-          await sendEmail(facility.email, 'Confirmation: Service Charges for Discharge Payment Completed', facilitymessage)
-
-          res.sendStatus(200);
-        }
-
-      } catch (error) {
-        console.error('Error processing webhook:', error);
-        res.sendStatus(500);
-      }
-    } else {
-      res.sendStatus(200);
+    if (event.event !== 'charge.success') {
+      return res.sendStatus(200);
     }
+
+    const { metadata } = event.data;
+    const { paymenttype } = metadata;
+
+    try {
+      switch (paymenttype) {
+        case 'subscription':
+          await handleSubscriptionPayment(metadata);
+          break;
+        case 'medicalbills':
+          await handleMedicalBillsPayment(metadata);
+          break;
+        case 'servicescharges':
+          await handleServiceChargesPayment(metadata);
+          break;
+        default:
+          console.warn('Unhandled payment type:', paymenttype);
+      }
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.error('Webhook processing error:', error);
+      res.sendStatus(500);
+    }
+  },
+
+  // Helper functions to handle different payment types
+  async handleSubscriptionPayment(metadata) {
+    const { facilityId, subscriptionDetails } = metadata;
+
+    const facility = await Hospitals.findById(facilityId) ||
+      await Pharmacies.findById(facilityId);
+
+    if (!facility) {
+      throw new Error('Facility not found');
+    }
+
+    facility.subscriptionstatus = true;
+    await facility.save();
+
+    const message = generateFacilitySubscriptionConfirmationMessage(facility, subscriptionDetails);
+    await sendEmail(facility.email, 'Subscription Payment Confirmation', message);
+  },
+
+  async handleMedicalBillsPayment(metadata) {
+    const { patientmedicalrecords, facility, patientId } = metadata;
+
+    const medicalRecords = await MedicalRecord.findById(patientmedicalrecords._id);
+    const patient = await Patient.findById(patientId._id);
+
+    if (!medicalRecords || !patient) {
+      throw new Error('Medical records or patient not found');
+    }
+
+    medicalRecords.billingStatus = 'paid';
+    await medicalRecords.save();
+
+    const message = generatePatientPaymentApprovedMessage(patient, medicalRecords.billingDetails, facility);
+    await sendEmail(patient.contact.email, 'Medical Bill Payment Approved', message);
+  },
+
+  async handleServiceChargesPayment(metadata) {
+    const { facilityId, patientId } = metadata;
+
+    const patient = await Patient.findById(patientId);
+    const facility = await Hospitals.findById(facilityId) ||
+      await Pharmacies.findById(facilityId);
+
+    if (!patient || !facility) {
+      throw new Error('Patient or facility not found');
+    }
+
+    patient.currentAdmission.isAdmitted = false;
+    patient.currentAdmission.hospital = null;
+    patient.currentAdmission.admissionDate = null;
+    await patient.save();
+
+    const facilitymessage = generateFacilityPaymentApprovedMessage(facility, patient);
+    await sendEmail(facility.email, 'Service Charges Payment Completed', facilitymessage);
   }
-  
+
 };
 
 module.exports = purchaseController;

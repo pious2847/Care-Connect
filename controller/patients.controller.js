@@ -79,113 +79,106 @@ const patientController = {
 
     },
 
-    async admite_DischargePatient(req, res) {
-        // console.log('async admite_request made', req)
+    async admitOrDischargePatient(req, res) {
         try {
-            const { action, patientId, facilityId } = req.params
-            if (req.body.dischargeDate) {
-                const { dischargeDate, totalAmount } = res.body
-            }
-
+            const { action, patientId, facilityId } = req.params;
             const patient = await Patient.findById(patientId);
             const facility = await Hospitals.findById(facilityId);
 
+            if (!patient || !facility) {
+                return res.status(404).redirect('/error');
+            }
 
             if (action === 'admit') {
-                const patientcurrentAdmission = patient.currentAdmission.isAdmitted;
-
-                console.log(patientcurrentAdmission)
-
-                if (patientcurrentAdmission) {
-                    req.flash('message', `${patient.firstName + ' ' + patient.lastName} is already admittented at ${facility.name}. contact facility to diacharge patient.`);
+                // Check if patient is already admitted
+                if (patient.currentAdmission.isAdmitted) {
+                    req.flash('message', `${patient.fullName} is already admitted at ${facility.name}.`);
                     req.flash('status', 'danger');
-                    res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._d}`)
+                    return res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`);
                 }
-                const patientAlreadyAdmited = facility.patients.includes(patient._id)
 
-                if (!patientAlreadyAdmited) {
-                    facility.patients.push(patient._id)
+                // Ensure patient is in facility's patient list
+                if (!facility.patients.includes(patient._id)) {
+                    facility.patients.push(patient._id);
                     await facility.save();
-
-                    patient.currentAdmission.isAdmitted = true;
-                    patient.currentAdmission.hospital = facility._id;
-                    patient.currentAdmission.admissionDate = new Date();
-
-                    patient.registeredHospitals.push({
-                        hospital: facility._id,
-                        registrationDate: new Date()
-                    });
-
-
-                    await patient.save();
-                    req.flash('message', `${patient.firstName + ' ' + patient.lastName} has been admittented successfully`);
-                    req.flash('status', 'success');
-                    res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`)
-
-                } else {
-                    patient.currentAdmission.isAdmitted = true;
-                    patient.currentAdmission.hospital = facility._id;
-                    patient.currentAdmission.admissionDate = new Date(Date.now());
-
-                    await patient.save();
-                    req.flash('message', `${patient.firstName + ' ' + patient.lastName} has been admittented successfully`);
-                    req.flash('status', 'success');
-                    res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`)
-
                 }
 
+                // Update patient admission details
+                patient.currentAdmission.isAdmitted = true;
+                patient.currentAdmission.hospital = facility._id;
+                patient.currentAdmission.admissionDate = new Date();
+                patient.registeredHospitals.push({
+                    hospital: facility._id,
+                    registrationDate: new Date()
+                });
+
+                await patient.save();
+
+                req.flash('message', `${patient.fullName} has been admitted successfully`);
+                req.flash('status', 'success');
+                return res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`);
             }
 
             if (action === 'discharge') {
+                const medicalRecords = await MedicalRecord.findOne({
+                    hospital: patient.currentAdmission.hospital,
+                    admissionDate: patient.currentAdmission.admissionDate
+                });
 
-                const medicalRecords = await MedicalRecord.findOne({ hospital: patient.currentAdmission.hospital, admissionDate: patient.currentAdmission.admissionDate })
-
-                let patientbills = 0;
-
-                if (req.body.totalAmount){ 
-                    patientbills = totalAmount
-                }else {
-                    patientbills = medicalRecords.billingDetails.totalAmount;
+                if (!medicalRecords) {
+                    req.flash('message', 'No medical records found for this admission');
+                    req.flash('status', 'danger');
+                    return res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`);
                 }
 
-                const patientmetadata={
-                    facility: facility,
-                    patientId: patient,
-                    patientmedicalrecords: medicalRecords,
-                    paymenttype: 'medicalbills'
+                const patientBills = req.body.totalAmount || medicalRecords.billingDetails.totalAmount;
+
+                // Payment initialization with error handling
+                try {
+                    const initializePatientPayment = await initiatePaystackPayment(
+                        patient.contact.email,
+                        patientBills,
+                        { facility, patientId: patient, patientmedicalrecords: medicalRecords, paymenttype: 'medicalbills' }
+                    );
+
+                    const initializeFacilityPayment = await initiatePaystackPayment(
+                        facility.email,
+                        50,
+                        { facilityId: facility, patientId: patient._id, paymenttype: 'servicescharges' }
+                    );
+
+                    // Send payment emails
+                    await sendEmail(
+                        facility.email,
+                        'Patient Discharge Payment (service charges)',
+                        await generateFacilityPaymentMessage(facility, patient, {
+                            authorization_url: initializeFacilityPayment.authorization_url,
+                            dischargeProcessingFee: 50
+                        })
+                    );
+
+                    await sendEmail(
+                        patient.contact.email,
+                        `${patient.fullName} Medical Bill`,
+                        await generatePatientPaymentMessage(patient, medicalRecords.billingDetails, initializePatientPayment.authorization_url)
+                    );
+
+                    req.flash('message', `${patient.fullName} will be discharged once payment is confirmed`);
+                    req.flash('status', 'success');
+                    res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`);
+
+                } catch (paymentError) {
+                    console.error('Payment initialization error:', paymentError);
+                    req.flash('message', 'Failed to process discharge payment. Please try again.');
+                    req.flash('status', 'danger');
+                    res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`);
                 }
-
-                const facilitymetadata = {
-                    facilityId: facility,
-                    patientId: patient._id,
-                    paymenttype: 'servicescharges'
-                }
-
-                // // Initialize payments for facility & patient 
-                const initializePatientPayment = await initiatePaystackPayment(patient.contact.email, patientbills, patientmetadata);
-                const initializeFacilityPayment = await initiatePaystackPayment(facility.email, 50, facilitymetadata);
-
-                const facilityPaymentDetails = {
-                    authorization_url: initializeFacilityPayment.authorization_url,
-                    dischargeProcessingFee: 50
-                }
-                const patientMessage = await generatePatientPaymentMessage(patient, medicalRecords.billingDetails, initializePatientPayment.authorization_url)
-                const facilityMessage = await generateFacilityPaymentMessage(facility, patient, facilityPaymentDetails)
-
-              
-
-                await sendEmail(facility.email, 'Patient Discharge Payment (service charges)', facilityMessage)
-                await sendEmail(patient.contact.email, `${patient.firstName} ${patient.lastName} Medical Bill `, patientMessage)
-
-                req.flash('message', `${patient.firstName + ' ' + patient.lastName} will be discharged once payment is confirme`);
-                req.flash('status', 'success');
-                res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`)
             }
-
         } catch (error) {
-            console.error('Patient Discharge error error:', error);
-            req.flash('message', `An error occurred during registration. Please try again.`);
+            console.error('Patient Admission/Discharge Error:', error);
+            req.flash('message', 'An unexpected error occurred. Please try again.');
             req.flash('status', 'danger');
+            res.redirect('/dashboard');
         }
     },
 
@@ -196,22 +189,22 @@ const patientController = {
             const alertMessage = req.flash("message");
             const alertStatus = req.flash("status");
             const alert = { message: alertMessage, status: alertStatus };
-    
-               
+
+
             // Improved search logic
             const searchConditions = [
                 { firstName: { $regex: new RegExp(query, 'i') } },
                 { lastName: { $regex: new RegExp(query, 'i') } },
                 { 'contact.email': { $regex: new RegExp(query, 'i') } }
             ];
-    
+
             // If the query contains a space, try to split and search by first and last name
             if (query.includes(' ')) {
                 const [firstName, ...lastNameParts] = query.split(' ');
                 const lastName = lastNameParts.join(' ');
-                
+
                 searchConditions.push(
-                    { 
+                    {
                         $and: [
                             { firstName: { $regex: new RegExp(firstName, 'i') } },
                             { lastName: { $regex: new RegExp(lastName, 'i') } }
@@ -219,12 +212,12 @@ const patientController = {
                     }
                 );
             }
-    
+
             // Search for patients
-            const patients = await Patient.find({ 
-                $or: searchConditions 
+            const patients = await Patient.find({
+                $or: searchConditions
             }).populate('registeredHospitals.hospital');
-    
+
             let account = null;
             if (Id) {
                 account = await Hospitals.findById(Id)
@@ -232,13 +225,13 @@ const patientController = {
                     .populate('appointments')
                     .populate('patients');
             }
-    
-            res.render('./Dashboard/patientsearch', { 
-                patients, 
-                accountType, 
-                account, 
-                alert, 
-                query 
+
+            res.render('./Dashboard/patientsearch', {
+                patients,
+                accountType,
+                account,
+                alert,
+                query
             });
         } catch (error) {
             console.error('Error searching patients:', error);
