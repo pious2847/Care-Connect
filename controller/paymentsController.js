@@ -59,13 +59,17 @@ const purchaseController = {
           const medicalRecords = await MedicalRecord.findById(patientmedicalrecords._id);
           const patient = await Patient.findById(patientId._id);
 
+          console.log('Patient',patient, patientId );
+          console.log('medicalRecords',medicalRecords);
+
+
           medicalRecords.billingStatus = 'paid'
           await medicalRecords.save();
 
-          // console.log('Patient',patient, patientId );
-          // console.log('medicalRecords',medicalRecords);
+          console.log('patientmedicalrecords billingDetails,', patientmedicalrecords.billingDetails,)
+          console.log('medicalRecords billingDetails,', medicalRecords.billingDetails,)
 
-          const message = generatePatientPaymentApprovedMessage(patient, patientmedicalrecords.billingDetails, facility);
+          const message = generatePatientPaymentApprovedMessage(patient, medicalRecords.billingDetails, facility);
 
           await sendEmail(patient.contact.email, 'Your Medical Bill Payment Has Been Approved ', message)
 
@@ -88,7 +92,7 @@ const purchaseController = {
             return res.status(404).send('Unable to find ficility ');
           }
 
-          // console.log("found patient", patient, patientId)
+          console.log("found patient", patient, patientId)
 
           patient.currentAdmission.isAdmitted = false;
           patient.currentAdmission.hospital = null;

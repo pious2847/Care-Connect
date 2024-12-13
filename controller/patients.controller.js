@@ -163,7 +163,7 @@ const patientController = {
 
                 // // Initialize payments for facility & patient 
                 const initializePatientPayment = await initiatePaystackPayment(patient.contact.email, patientbills, patientmetadata);
-                const initializeFacilityPayment = await initiatePaystackPayment(facility.email, patientbills, facilitymetadata);
+                const initializeFacilityPayment = await initiatePaystackPayment(facility.email, 50, facilitymetadata);
 
                 const facilityPaymentDetails = {
                     authorization_url: initializeFacilityPayment.authorization_url,
