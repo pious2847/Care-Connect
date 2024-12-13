@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 const initiatePaystackPayment = require('../utils/payment');
 const Pharmacies = require('../models/pharmacy');
 const staffs = require('../models/staffs');
-const patients = require('../models/patients');
+const Patient = require('../models/patients');
 const { generateFacilityWelcomeMessage } = require('../utils/messages');
 const { sendEmail } = require('../utils/MailSender');
 
@@ -54,7 +54,7 @@ const hospitalController = {
                     publicId
                 }
             });
-            
+
             const metadata = {
                 facilityId: newHospital._id,
                 ...newHospital,
@@ -99,7 +99,7 @@ const hospitalController = {
             } else if (accountType === 'staff') {
                 account = await staffs.findOne({ email });
             } else {
-                account = await patients.findOne({ email });
+                account = await Patient.findOne({ email });
             }
 
             if (!account) {
