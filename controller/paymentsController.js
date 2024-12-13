@@ -24,7 +24,6 @@ const purchaseController = {
       const { metadata } = event.data;
       const { paymenttype } = metadata;
 
-
       try {
 
         if (paymenttype === 'subscription') {
@@ -76,7 +75,7 @@ const purchaseController = {
 
           res.sendStatus(200);
         }
-        
+
       } catch (error) {
         console.error('Error processing webhook:', error);
         res.sendStatus(500);
