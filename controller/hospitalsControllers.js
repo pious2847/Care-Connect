@@ -126,7 +126,7 @@ const hospitalController = {
             req.session.accountType = accountType;
             req.session.isLoggedIn = true;
 
-            req.flash('message', `Welcome back ${account.username || account.name || 'User'}!`);
+            req.flash('message', `Welcome back ${account.username || account.name || account.firstname +' '+ account.lastname||'User'}!`);
             req.flash('status', 'success');
 
 
