@@ -67,7 +67,7 @@ const StaffsSchema = new mongoose.Schema(
     facilityType: {
       type: String,
       required: true,
-      enum: ['pharmacies', 'hospitals'], // Must match one of these models
+      enum: ['Pharmacies', 'Hospitals'], // Must match one of these models
     },
     contact: {
       type: String,
