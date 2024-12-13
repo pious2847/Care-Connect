@@ -155,6 +155,7 @@ const RenderPages = {
                     }
                 }
             }
+            console.log(account)
 
             res.render('./Dashboard/dashboard', { account, accountType, alert })
         } catch (error) {
@@ -170,9 +171,67 @@ const RenderPages = {
             const alert = { message: alertMessage, status: alertStatus };
 
             const { Id, accountType } = req.params;
+            const { accountId } = req.session
 
             let account = null;
-            if (Id) {
+            let facilitystaffs = null;
+
+
+            if (Id && accountType != 'staff') {
+                account = await Hospitals.findById(Id)
+                    .populate({
+                        path: 'staffs',
+                        options: {
+                            sort: { _id: -1 },
+                        }
+                    })
+                if (!account) {
+                    account = await Pharmacies.findById(Id)
+                        .populate({
+                            path: 'staffs',
+                            options: {
+                                sort: { _id: -1 },
+                            }
+                        })
+                }
+                facilitystaffs = account.staffs;
+            }
+
+            if (accountType === 'staff') {
+                account = await staffs.findById(accountId)
+                    .populate({
+                        path: 'facilityId',
+                        populate: [
+                            {
+                                path: 'staffs'
+                            }
+                        ]
+                    })
+
+                facilitystaffs = account.facilityId.staffs
+            }
+
+            console.log(facilitystaffs)
+            res.render('./Dashboard/staffs', { account, staffs: facilitystaffs, accountType, alert })
+        } catch (error) {
+            console.error(error.message);
+            res.status(500).json({ success: false, message: error.message });
+        }
+    },
+    async getFacilityAppointments(req, res) {
+        try {
+            const alertMessage = req.flash("message");
+            const alertStatus = req.flash("status");
+
+            const alert = { message: alertMessage, status: alertStatus };
+
+            const { Id, accountType } = req.params;
+            const { accountId } = req.session
+
+            const appointments = await Appointments.find({ facility: Id }).sort({ isAttended: 1 })
+
+            let account = null;
+            if (Id && accountType === 'hospitals') {
                 account = await Hospitals.findById(Id)
                     .populate({
                         path: 'staffs',
@@ -190,43 +249,11 @@ const RenderPages = {
                         })
                 }
             }
-            const facilitystaffs = account.staffs;
-            // console.log(facilitystaffs)
-            res.render('./Dashboard/staffs', { account, staffs: facilitystaffs, accountType, alert })
-        } catch (error) {
-            console.error(error.message);
-            res.status(500).json({ success: false, message: error.message });
-        }
-    },
-    async getFacilityAppointments(req, res) {
-        try {
-            const alertMessage = req.flash("message");
-            const alertStatus = req.flash("status");
-
-            const alert = { message: alertMessage, status: alertStatus };
-
-            const { Id, accountType } = req.params;
-
-            const appointments = await Appointments.find({ facility: Id }).sort({ isAttended: 1 })
-
-            let account = null;
-            if (Id) {
-                account = await Hospitals.findById(Id)
+            if (accountType === 'staff') {
+                account = await staffs.findById(accountId)
                     .populate({
-                        path: 'staffs',
-                        options: {
-                            sort: { _id: -1 },
-                        }
+                        path: 'facilityId'
                     })
-                if (!account) {
-                    account = await Pharmacies.findById(Id)
-                        .populate({
-                            path: 'staffs',
-                            options: {
-                                sort: { _id: -1 },
-                            }
-                        })
-                }
             }
 
             res.render('./Dashboard/appointments', { account, appointments, accountType, alert })
@@ -242,6 +269,9 @@ const RenderPages = {
         const alert = { message: alertMessage, status: alertStatus };
 
         const { Id, accountType } = req.params;
+        const { accountId } = req.session
+        let account = null;
+        let patients = null;
 
         const hospitals = await Hospitals.find({ subscriptionstatus: true }).populate({
             path: 'staffs',
@@ -250,12 +280,33 @@ const RenderPages = {
                 sort: { position: -1 },
             }
         })
-        const hospital = await Hospitals.findById(Id)
+
+        account = await Hospitals.findById(Id)
             .populate({
                 path: 'patients',
             });
+        patients = account.patients;
 
-        res.render('./Dashboard/patients', { account: hospital, hospitals, patients: hospital.patients, count: hospital.patients.length, alert, accountType })
+        if (accountType === 'staff') {
+            account = await staffs.findById(accountId)
+                .populate({
+                    path: 'facilityId',
+                    populate: [
+                        {
+                            path: 'staffs'
+                        },
+                        {
+                            path: 'patients'
+                        }
+                    ]
+                })
+            patients = account.facilityId.patients;
+        }
+
+        console.log('patients', patients, 'account', account)
+
+
+        res.render('./Dashboard/patients', { account, hospitals, patients, count: patients.length, alert, accountType })
     },
     async getPatient(req, res) {
         const { Id, accountType, patientId } = req.params;
@@ -378,29 +429,29 @@ const RenderPages = {
         try {
             const alertMessage = req.flash("message");
             const alertStatus = req.flash("status");
-    
+
             const alert = { message: alertMessage, status: alertStatus };
-    
+
             const { Id, accountType } = req.params;
-    
+
             let account = null;
             if (Id) {
                 account = await Pharmacies.findById(Id)
-                .populate('staffs')
-                .populate('drugs') 
-                .populate({
-                    path: 'sales',
-                    populate: [
-                        { path: 'drugs.drugId' }
-                    ]
-                });
+                    .populate('staffs')
+                    .populate('drugs')
+                    .populate({
+                        path: 'sales',
+                        populate: [
+                            { path: 'drugs.drugId' }
+                        ]
+                    });
             }
-    
-            res.render('./Dashboard/pharmarcydrugs', { 
-                success: true, 
-                account, 
-                accountType, 
-                alert 
+
+            res.render('./Dashboard/pharmarcydrugs', {
+                success: true,
+                account,
+                accountType,
+                alert
             })
         } catch (error) {
             console.error(error.message);
@@ -411,29 +462,29 @@ const RenderPages = {
         try {
             const alertMessage = req.flash("message");
             const alertStatus = req.flash("status");
-    
+
             const alert = { message: alertMessage, status: alertStatus };
-    
+
             const { Id, accountType } = req.params;
-    
+
             let account = null;
             if (Id) {
                 account = await Pharmacies.findById(Id)
-                .populate('staffs')
-                .populate('drugs') 
-                .populate({
-                    path: 'sales',
-                    populate: [
-                        { path: 'drugs.drugId' }
-                    ]
-                });
+                    .populate('staffs')
+                    .populate('drugs')
+                    .populate({
+                        path: 'sales',
+                        populate: [
+                            { path: 'drugs.drugId' }
+                        ]
+                    });
             }
-    
-            res.render('./Dashboard/phamarcysales', { 
-                success: true, 
-                account, 
-                accountType, 
-                alert ,
+
+            res.render('./Dashboard/phamarcysales', {
+                success: true,
+                account,
+                accountType,
+                alert,
                 drugs: account.drugs
             })
         } catch (error) {

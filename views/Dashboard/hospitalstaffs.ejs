@@ -4,7 +4,7 @@
             <h4 class="text-primary font-monospace">Facility Staffs</h4>
             <p class="small">A brief summary of facility staffs</p>
         </div>
-        <% if (accountType != 'hospitals') { %>
+        <% if (accountType === 'hospitals') { %>
             <div>
                 <button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#exampleModalLong">
                     Add Staffs

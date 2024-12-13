@@ -17,9 +17,9 @@
 
 
                             <div class="contentwrapper">
-                              <% if (accountType === 'hospitals') { %>
+                              <% if (accountType === 'hospitals' || accountType === 'staff') { %>
                                <%- include('./hospitalstaffs') %>
-                              <% } else if (accountType === 'pharmacies') { %>
+                              <% } else if (accountType === 'pharmacies'|| accountType === 'staff') { %>
                                     <p>Pharmarcy</p>
                              <% } %>
                              
