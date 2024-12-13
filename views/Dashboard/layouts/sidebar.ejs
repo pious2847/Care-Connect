@@ -56,6 +56,26 @@
                 </a>
             </li>
         <% } %>
+        <% if (accountType === 'staff') { %>
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/<%= account._id %>/staffs" class="nav-link">
+                  <i class='bx bx-user'></i>
+                    <span class="link-text">Staffs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/<%= account._id %>/appointments" class="nav-link">
+                    <i class='bx bx-calendar' ></i>
+                    <span class="link-text">Appointments</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/<%= account._id %>/patients" class="nav-link">
+                    <i class='bx bx-health' ></i>
+                    <span class="link-text">Patients</span>
+                </a>
+            </li>
+        <% } %>
         <% if (account.isOwner) { %>
             <li class="nav-item">
                 <a href="/dashboard/<%= accountType %>/<%= account._id %>/hospitals" class="nav-link">
