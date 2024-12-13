@@ -145,10 +145,22 @@ const patientController = {
                 if (req.body.totalAmount) patientbills = totalAmount
                 else patientbills = medicalRecords.billingDetails.totalAmount;
 
+                const patientmetadata={
+                    facility: facility,
+                    patient,
+                    patientmedicalrecords: medicalRecords,
+                    paymenttype: 'medicalbills'
+                }
+
+                const facilitymetadata = {
+                    facility: facility,
+                    patient,
+                    paymenttype: 'servicescharges'
+                }
 
                 // // Initialize payments for facility & patient 
-                const initializePatientPayment = await initiatePaystackPayment(patient.contact.email, patientbills, patient);
-                const initializeFacilityPayment = await initiatePaystackPayment(facility.email, patientbills, facility);
+                const initializePatientPayment = await initiatePaystackPayment(patient.contact.email, patientbills, patientmetadata);
+                const initializeFacilityPayment = await initiatePaystackPayment(facility.email, patientbills, facilitymetadata);
 
                 const facilityPaymentDetails = {
                     authorization_url: initializeFacilityPayment.authorization_url,
@@ -157,16 +169,12 @@ const patientController = {
                 const patientMessage = await generatePatientPaymentMessage(patient, medicalRecords.billingDetails, initializePatientPayment.authorization_url)
                 const facilityMessage = await generateFacilityPaymentMessage(facility, patient, facilityPaymentDetails)
 
-                patient.currentAdmission.isAdmitted = false;
-                patient.currentAdmission.hospital = null;
-                patient.currentAdmission.admissionDate = null;
-
-                await patient.save();
+              
 
                 await sendEmail(facility.email, 'Patient Discharge Payment (service charges)', facilityMessage)
                 await sendEmail(patient.contact.email, `${patient.firstName} ${patient.lastName} Medical Bill `, patientMessage)
 
-                req.flash('message', `${patient.firstName + ' ' + patient.lastName} has been discharged successfully`);
+                req.flash('message', `${patient.firstName + ' ' + patient.lastName} will be discharged once payment is confirme`);
                 req.flash('status', 'success');
                 res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`)
             }

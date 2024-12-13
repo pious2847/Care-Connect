@@ -1,13 +1,15 @@
 const crypto = require('crypto');
 const Hospitals = require('../models/hospitals');
 const Pharmacies = require('../models/pharmacy');
+const { sendEmail } = require('../utils/MailSender');
+const { generatePatientPaymentMessage, generatePatientPaymentApprovedMessage, generateFacilityPaymentApprovedMessage } = require('../utils/messages');
 
 const purchaseController = {
-   /**
-   * Handled Paystack Payment Webhook
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
+  /**
+  * Handled Paystack Payment Webhook
+  * @param {Object} req - Express request object
+  * @param {Object} res - Express response object
+  */
   async handlePaystackWebhook(req, res) {
     const secret = process.env.PAYSTACK_API_KEY;
     const hash = crypto.createHmac('sha512', secret).update(JSON.stringify(req.body)).digest('hex');
@@ -15,30 +17,65 @@ const purchaseController = {
     if (hash !== req.headers['x-paystack-signature']) {
       return res.status(400).send('Invalid signature');
     }
-  
+
     const event = req.body;
-  
+
     if (event.event === 'charge.success') {
       const { metadata } = event.data;
-      const {facilityId } = metadata;
-  
+      const { paymenttype } = metadata;
+
+
       try {
-        let facility = null
 
-        if(facilityId){
-          facility = await Hospitals.findById(facilityId)
-        }else{
+        if (paymenttype === 'subscription') {
+          const { facilityId } = metadata;
+
+
+          let facility = null
+
+          if (facilityId) {
+            facility = await Hospitals.findById(facilityId)
+          } else {
             facility = await Pharmacies.findById()
+          }
+
+          if (facility) {
+            return res.status(404).send('Unable to find ficility ');
+          }
+          facility.subscriptionstatus = true
+
+          facility.save();
+
+          res.sendStatus(200);
+        }
+        if(paymenttype === 'medicalbills'){
+          const { patientmedicalrecords , facility, patient} = metadata;
+
+          patientmedicalrecords.billingStatus = 'paid'
+          await patientmedicalrecords.save();
+
+          const message = generatePatientPaymentApprovedMessage(patient, patientmedicalrecords.billingDetails, facility);
+
+          await sendEmail(patient.contact.email, 'Your Medical Bill Payment Has Been Approved ', message)
+
+          res.sendStatus(200);
         }
 
-        if (facility) {
-          return res.status(404).send('Unable to find ficility ');
+        if(paymenttype ==='servicescharges'){
+          const { facility, patient} = metadata;
+
+          patient.currentAdmission.isAdmitted = false;
+          patient.currentAdmission.hospital = null;
+          patient.currentAdmission.admissionDate = null;
+
+          await patient.save();
+
+          const facilitymessage = generateFacilityPaymentApprovedMessage(facility,  patient, patientmedicalrecords.billingDetails);
+
+          await sendEmail(facility.email, 'Confirmation: Service Charges for Discharge Payment Completed', facilitymessage)
+
+          res.sendStatus(200);
         }
-        facility.subscriptionstatus = true
-
-        facility.save();
-
-        res.sendStatus(200);
         
       } catch (error) {
         console.error('Error processing webhook:', error);
