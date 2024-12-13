@@ -142,8 +142,11 @@ const patientController = {
 
                 let patientbills = 0;
 
-                if (req.body.totalAmount) patientbills = totalAmount
-                else patientbills = medicalRecords.billingDetails.totalAmount;
+                if (req.body.totalAmount){ 
+                    patientbills = totalAmount
+                }else {
+                    patientbills = medicalRecords.billingDetails.totalAmount;
+                }
 
                 const patientmetadata={
                     facility: facility,
