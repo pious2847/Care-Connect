@@ -5,18 +5,16 @@
             <i class='bx bx-menu'></i>
         </div>
         <div class="facilitylogo p-2 justify-content-center ">
-            <% if (accountType && accountType === 'hospitals' || accountType === 'pharmacies') { %>
-                <img src="<%= account.logo.picture %>" alt="<%= account.name %>"  >
-            <h4 class="text-uppercase"><%= account.name %> </h4>
-          
-            <%else if (accountType && accountType === 'staff') { %>
-                <img src="<%= account.facilityId.logo.picture %>" alt="<%= account.facilityId.name %>"  >
-            <h4 class="text-uppercase"><%= account.facilityId.name %> </h4>         
+            <% if (accountType && (accountType === 'hospitals' || accountType === 'pharmacies')) { %>
+                <img src="<%= account.logo.picture %>" alt="<%= account.name %>">
+                <h4 class="text-uppercase"><%= account.name %></h4>
+            <% } else if (accountType && accountType === 'staff') { %>
+                <img src="<%= account.facilityId.logo.picture %>" alt="<%= account.facilityId.name %>">
+                <h4 class="text-uppercase"><%= account.facilityId.name %></h4>
             <% } else { %>
-                <img src="/icons/icon-92x92.png" alt=""  >
+                <img src="/icons/icon-92x92.png" alt="">
                 <h4>Care Connect</h4>
-            <% }%>
-             
+            <% } %>
         </div >
         
      </div>
