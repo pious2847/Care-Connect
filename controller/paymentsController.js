@@ -77,12 +77,15 @@ const purchaseController = {
 
     const medicalRecords = await MedicalRecord.findById(patientmedicalrecords._id);
     const patient = await Patient.findById(patientId._id);
+    const curentmedicleRecords = medicalRecords;
 
     if (!medicalRecords || !patient) {
       throw new Error('Medical records or patient not found');
     }
 
     medicalRecords.billingStatus = 'paid';
+    medicalRecords.billingDetails.daysAdmitted = curentmedicleRecords.billingDetails.daysAdmitted;
+    medicalRecords.billingDetails.totalAmount = curentmedicleRecords.billingDetails.totalAmount;
     await medicalRecords.save();
 
     const message = generatePatientPaymentApprovedMessage(patient, medicalRecords.billingDetails, facility);
