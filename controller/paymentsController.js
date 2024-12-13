@@ -105,7 +105,7 @@ const purchaseController = {
     patient.currentAdmission.admissionDate = null;
     await patient.save();
 
-    const facilitymessage = generateFacilityPaymentApprovedMessage(facility, patient);
+    const facilitymessage = generateFacilityPaymentApprovedMessage(facility, patient, paymentDetails={dischargeProcessingFee: 50});
     await sendEmail(facility.email, 'Service Charges Payment Completed', facilitymessage);
   }
 
