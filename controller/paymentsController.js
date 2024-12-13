@@ -3,6 +3,8 @@ const Hospitals = require('../models/hospitals');
 const Pharmacies = require('../models/pharmacy');
 const { sendEmail } = require('../utils/MailSender');
 const { generateFacilitySubscriptionConfirmationMessage, generatePatientPaymentApprovedMessage, generateFacilityPaymentApprovedMessage } = require('../utils/messages');
+const MedicalRecord = require('../models/MedicalRecord');
+const Patients = require('../models/patients');
 
 const purchaseController = {
   /**
@@ -51,10 +53,13 @@ const purchaseController = {
           res.sendStatus(200);
         }
         if(paymenttype === 'medicalbills'){
-          const { patientmedicalrecords , facility, patient} = metadata;
+          const { patientmedicalrecords , facility, patientId} = metadata;
 
-          patientmedicalrecords.billingStatus = 'paid'
-          await patientmedicalrecords.save();
+          const medicalRecords = await MedicalRecord.findById(patientmedicalrecords._id);
+          const patient = await Patients.findById(patientId);
+
+          medicalRecords.billingStatus = 'paid'
+          await medicalRecords.save();
 
           const message = generatePatientPaymentApprovedMessage(patient, patientmedicalrecords.billingDetails, facility);
 
@@ -62,9 +67,22 @@ const purchaseController = {
 
           res.sendStatus(200);
         }
-
         if(paymenttype ==='servicescharges'){
-          const { facility, patient} = metadata;
+          const { facilityId, patientId} = metadata;
+
+          const patient = await Patients.findById(patientId);
+
+          let facility = null
+
+          if (facilityId) {
+            facility = await Hospitals.findById(facilityId)
+          } else {
+            facility = await Pharmacies.findById()
+          }
+
+          if (facility) {
+            return res.status(404).send('Unable to find ficility ');
+          }
 
           patient.currentAdmission.isAdmitted = false;
           patient.currentAdmission.hospital = null;
