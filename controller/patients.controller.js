@@ -92,7 +92,7 @@ const patientController = {
             if (action === 'admit') {
                 // Check if patient is already admitted
                 if (patient.currentAdmission.isAdmitted) {
-                    req.flash('message', `${patient.fullName} is already admitted at ${facility.name}.`);
+                    req.flash('message', `${patient.firstName} ${patient.lastName} is already admitted at ${facility.name}.`);
                     req.flash('status', 'danger');
                     return res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`);
                 }
@@ -114,7 +114,7 @@ const patientController = {
 
                 await patient.save();
 
-                req.flash('message', `${patient.fullName} has been admitted successfully`);
+                req.flash('message', `${patient.firstName} ${patient.lastName} has been admitted successfully`);
                 req.flash('status', 'success');
                 return res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`);
             }
@@ -159,11 +159,11 @@ const patientController = {
 
                     await sendEmail(
                         patient.contact.email,
-                        `${patient.fullName} Medical Bill`,
+                        `${patient.firstName} ${patient.lastName} Medical Bill`,
                         await generatePatientPaymentMessage(patient, medicalRecords.billingDetails, initializePatientPayment.authorization_url)
                     );
 
-                    req.flash('message', `${patient.fullName} will be discharged once payment is confirmed`);
+                    req.flash('message', `${patient.firstName} ${patient.lastName} will be discharged once payment is confirmed`);
                     req.flash('status', 'success');
                     res.redirect(`/dashboard/hospitals/${facility._id}/patient/${patient._id}`);
 
