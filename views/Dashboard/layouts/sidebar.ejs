@@ -58,13 +58,13 @@
         <% } %>
         <% if (accountType === 'staff') { %>
             <li class="nav-item">
-                <a href="/dashboard/<%= account.facilityType.toLowerCase() %>/<%= account.facilityId._id %>/staffs" class="nav-link">
+                <a href="/dashboard/<%= accountType %>/facility/<%= account.facilityId._id %>/staffs" class="nav-link">
                     <i class='bx bx-user'></i>
                     <span class="link-text">Staffs</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="/dashboard/<%= account.facilityType.toLowerCase() %>/<%= account.facilityId._id %>/appointments" class="nav-link">
+                <a href="/dashboard/<%= accountType %>/facility/<%= account.facilityId._id %>/appointments" class="nav-link">
                     <i class='bx bx-calendar'></i>
                     <span class="link-text">Appointments</span>
                 </a>
