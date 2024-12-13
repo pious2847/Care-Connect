@@ -56,7 +56,8 @@ const purchaseController = {
           const { patientmedicalrecords , facility, patientId} = metadata;
 
           const medicalRecords = await MedicalRecord.findById(patientmedicalrecords._id);
-          const patient = await Patients.findById(patientId);
+
+          const patient = await Patients.findById(patientId._id);
 
           medicalRecords.billingStatus = 'paid'
           await medicalRecords.save();
