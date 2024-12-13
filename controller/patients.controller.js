@@ -147,7 +147,7 @@ const patientController = {
 
                 const patientmetadata={
                     facility: facility,
-                    patientId: patient._id,
+                    patientId: patient,
                     patientmedicalrecords: medicalRecords,
                     paymenttype: 'medicalbills'
                 }
