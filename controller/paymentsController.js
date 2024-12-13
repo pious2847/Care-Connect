@@ -4,7 +4,8 @@ const Pharmacies = require('../models/pharmacy');
 const { sendEmail } = require('../utils/MailSender');
 const { generateFacilitySubscriptionConfirmationMessage, generatePatientPaymentApprovedMessage, generateFacilityPaymentApprovedMessage } = require('../utils/messages');
 const MedicalRecord = require('../models/MedicalRecord');
-const Patients = require('../models/patients');
+const Patient = require('../models/patients');
+
 
 const purchaseController = {
   /**
@@ -57,13 +58,13 @@ const purchaseController = {
 
           const medicalRecords = await MedicalRecord.findById(patientmedicalrecords._id);
 
-          const patient = await Patients.findById(patientId._id);
+          const patient = await Patient.findById(patientId._id);
 
           medicalRecords.billingStatus = 'paid'
           await medicalRecords.save();
 
-          console.log('Patient',patient, patientId );
-          console.log('medicalRecords',medicalRecords);
+          // console.log('Patient',patient, patientId );
+          // console.log('medicalRecords',medicalRecords);
 
           const message = generatePatientPaymentApprovedMessage(patient, patientmedicalrecords.billingDetails, facility);
 
@@ -74,7 +75,7 @@ const purchaseController = {
         if(paymenttype ==='servicescharges'){
           const { facilityId, patientId} = metadata;
 
-          const patient = await Patients.findById(patientId);
+          const patient = await Patient.findById(patientId);
 
           let facility = null
 
@@ -88,7 +89,7 @@ const purchaseController = {
             return res.status(404).send('Unable to find ficility ');
           }
 
-          console.log("found patient", patient, patientId)
+          // console.log("found patient", patient, patientId)
 
           patient.currentAdmission.isAdmitted = false;
           patient.currentAdmission.hospital = null;
