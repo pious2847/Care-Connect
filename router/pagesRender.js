@@ -1,6 +1,7 @@
 const express = require('express');
 const RenderPages = require('../controller/pagesrender');
 const { isLoggedIn ,preventLoggedInAccess, isServiceOwner} = require('../middleware/auth');
+const purchaseController = require('../controller/paymentsController');
 const router = express.Router();
 
 router.get('/',  RenderPages.getHome)
@@ -29,6 +30,10 @@ router.get('/dashboard/:accountType/:Id/sales',  RenderPages.getAllPharmacySales
 // router.post('/dashboard/:accountType/:Id/pharmacies/:pharmacyId/appointments', isServiceOwner, RenderPages.addPharmacyAppointment)
 // router.post('/dashboard/:accountType/:Id/pharmacies/:pharmacyId/patients', isServiceOwner, RenderPages.addPharmacyPatient)
 // router.delete('/dashboard/:accountType/:Id/pharmacies/:pharmacyId', isServiceOwner, RenderPages.deletePharmacy)
+
+
+// payment webhook routes
+router.post('/payments/webhook', purchaseController.handlePaystackWebhook)
 
 
 module.exports = router

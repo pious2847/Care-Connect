@@ -54,11 +54,18 @@ const hospitalController = {
                     publicId
                 }
             });
+            
             const metadata = {
                 facilityId: newHospital._id,
                 ...newHospital,
-                paymenttype: 'subscription'
+                paymenttype: 'subscription',
+                subscriptionDetails :{
+                    planName: "Professional Plan",
+                    period: "Annual",
+                    amount: 300.00
+                }
             }
+
             // Initialize payment before saving
             const initializePayment = await initiatePaystackPayment(email, 300, metadata);
 

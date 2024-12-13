@@ -1,5 +1,5 @@
 const generatStaffeWelcomeMessage = (organization, user, password) => {
-  return `
+    return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,7 +80,7 @@ const generatStaffeWelcomeMessage = (organization, user, password) => {
 };
 
 const generateFacilityWelcomeMessage = (organization, paymentDetails) => {
-  return `
+    return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -163,7 +163,7 @@ const generateFacilityWelcomeMessage = (organization, paymentDetails) => {
 };
 
 const generateAppointmentEmail = (appointment, facility) => {
-  return `<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -227,7 +227,7 @@ const generateAppointmentEmail = (appointment, facility) => {
 }
 
 const generateFacilityAppointmentEmail = (appointment, facility) => {
-  return `
+    return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -441,7 +441,7 @@ const generateFacilityPaymentMessage = (facility, patient, paymentDetails) => {
       <div style="background-color: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0;">
           <h2 style="color: #1e40af; margin-top: 0;">Patient Details</h2>
           <p><strong>Patient Name:</strong> ${patient.firstName} ${patient.lastName}</p>
-          <p><strong>Patient Contact:</strong><a href="mailto: ${patient.contact.email}"> ${ patient.contact.email} </a> </p>
+          <p><strong>Patient Contact:</strong><a href="mailto: ${patient.contact.email}"> ${patient.contact.email} </a> </p>
           <p><strong>Patient Phone:</strong><a href="tel:+233 ${patient.contact.phone}">${patient.contact.phone}</a></p>
           <p><strong>Discharge Date:</strong> ${new Date().toLocaleDateString()}</p>
       </div>
@@ -590,4 +590,98 @@ const generateFacilityPaymentApprovedMessage = (facility, patient, paymentDetail
     `;
 };
 
-module.exports = {generateFacilityPaymentApprovedMessage,generatePatientPaymentApprovedMessage,generatePatientPaymentMessage, generateFacilityPaymentMessage, generatStaffeWelcomeMessage, generateFacilityWelcomeMessage, generateAppointmentEmail, generateFacilityAppointmentEmail };
+const generateFacilitySubscriptionConfirmationMessage = (facility, subscriptionDetails) => {
+    return `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Care Connect - Subscription Confirmation</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect Logo" style="max-width: 200px; height: auto;">
+      </div>
+  
+      <h1 style="color: #2563eb; text-align: center;">Subscription Activated Successfully</h1>
+      
+      <p>Dear ${facility.name} Management,</p>
+      
+      <p>Congratulations! Your Care Connect platform subscription has been successfully activated.</p>
+      
+      <div style="background-color: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h2 style="color: #1e40af; margin-top: 0;">Subscription Details</h2>
+          <p><strong>Facility Name:</strong> ${facility.name}</p>
+          <p><strong>Subscription Plan:</strong> ${subscriptionDetails.planName}</p>
+          <p><strong>Activation Date:</strong> ${new Date().toLocaleDateString()}</p>
+          <p><strong>Subscription Period:</strong> ${subscriptionDetails.period}</p>
+      </div>
+  
+      <div style="background-color: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h2 style="color: #1e40af; margin-top: 0;">Payment Summary</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                  <th style="border: 1px solid #e5e7eb; padding: 10px; text-align: left;">Description</th>
+                  <th style="border: 1px solid #e5e7eb; padding: 10px; text-align: right;">Amount</th>
+              </tr>
+              <tr>
+                  <td style="border: 1px solid #e5e7eb; padding: 10px;">Subscription Fee</td>
+                  <td style="border: 1px solid #e5e7eb; padding: 10px; text-align: right;">$${subscriptionDetails.amount.toFixed(2)}</td>
+              </tr>
+              <tr>
+                  <td style="border: 1px solid #e5e7eb; padding: 10px; font-weight: bold;">Total Paid</td>
+                  <td style="border: 1px solid #e5e7eb; padding: 10px; text-align: right; font-weight: bold;">$${subscriptionDetails.amount.toFixed(2)}</td>
+              </tr>
+          </table>
+      </div>
+  
+      <div style="background-color: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h2 style="color: #1e40af; margin-top: 0;">Next Steps</h2>
+          <p>You can now fully utilize all features of the Care Connect platform. Here are some recommended next steps:</p>
+          <ul style="padding-left: 20px;">
+              <li>Complete your facility profile</li>
+              <li>Add your medical staff to the system</li>
+              <li>Explore patient management tools</li>
+              <li>Set up billing and discharge workflows</li>
+          </ul>
+      </div>
+  
+      <p>Need help getting started? Our support team is ready to assist you:</p>
+      <p style="margin-left: 20px;">
+          Email: support@careconnect.com<br>
+          Phone: +233 24 274 3903
+      </p>
+  
+      <p>Thank you for choosing Care Connect to streamline your healthcare operations.</p>
+      
+      <p>Best regards,<br>
+      Customer Success Team<br>
+      Care Connect</p>
+      
+      <div style="margin-top: 40px; border-top: 2px solid #e5e7eb; padding-top: 20px; text-align: center;">
+          <p style="color: #6b7280; font-size: 0.8em;">
+              Care Connect - Empowering Healthcare Organizations<br>
+              <a href="https://care-connect-l1ha.onrender.com" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
+          </p>
+      </div>
+  
+      <div style="text-align: center; margin-top: 20px; font-size: 0.8em; color: #6b7280;">
+          <p>Subscription Confirmation - Confidential Communication</p>
+      </div>
+  </body>
+  </html>
+    `;
+};
+
+module.exports = {
+    generateFacilityPaymentApprovedMessage,
+    generatePatientPaymentApprovedMessage,
+    generatePatientPaymentMessage,
+    generateFacilityPaymentMessage,
+    generatStaffeWelcomeMessage,
+    generateFacilityWelcomeMessage,
+    generateAppointmentEmail,
+    generateFacilityAppointmentEmail,
+    generateFacilitySubscriptionConfirmationMessage
+};
