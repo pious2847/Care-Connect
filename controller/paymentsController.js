@@ -61,6 +61,9 @@ const purchaseController = {
           medicalRecords.billingStatus = 'paid'
           await medicalRecords.save();
 
+          console.log('Patient',patient);
+          console.log('medicalRecords',medicalRecords);
+
           const message = generatePatientPaymentApprovedMessage(patient, patientmedicalrecords.billingDetails, facility);
 
           await sendEmail(patient.contact.email, 'Your Medical Bill Payment Has Been Approved ', message)
@@ -83,7 +86,7 @@ const purchaseController = {
           if (facility) {
             return res.status(404).send('Unable to find ficility ');
           }
-          
+
           console.log("found patient", patient, patientId)
 
           patient.currentAdmission.isAdmitted = false;
