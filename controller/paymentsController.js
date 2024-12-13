@@ -61,7 +61,7 @@ const purchaseController = {
           medicalRecords.billingStatus = 'paid'
           await medicalRecords.save();
 
-          console.log('Patient',patient);
+          console.log('Patient',patient, patientId );
           console.log('medicalRecords',medicalRecords);
 
           const message = generatePatientPaymentApprovedMessage(patient, patientmedicalrecords.billingDetails, facility);
