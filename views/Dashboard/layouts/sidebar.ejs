@@ -69,7 +69,12 @@
                     <span class="link-text">Appointments</span>
                 </a>
             </li>
-            
+            <li class="nav-item">
+                <a href="/dashboard/<%= accountType %>/facility/<%= account.facilityId._id %>/patients" class="nav-link">
+                    <i class='bx bx-health' ></i>
+                    <span class="link-text">Patients</span>
+                </a>
+            </li>
         <% } %>
         <% if (account.isOwner) { %>
             <li class="nav-item">

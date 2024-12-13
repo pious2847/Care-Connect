@@ -17,8 +17,6 @@ router.get('/register/pharmacy',  RenderPages.getPharmacyRegisteration)
 router.get('/dashboard/:accountType/:Id', isLoggedIn, RenderPages.getDashboard)
 router.get('/dashboard/:accountType/:Id/staffs',  RenderPages.getFacilityStaffs)
 router.get('/dashboard/:accountType/:Id/appointments',  RenderPages.getFacilityAppointments)
-router.get('/dashboard/:accountType/facility/:Id/staffs',  RenderPages.getFacilityAppointments)
-router.get('/dashboard/:accountType/facility/:Id/appointments',  RenderPages.getFacilityAppointments)
 router.get('/dashboard/:accountType/:Id/patients',  RenderPages.getAllPatients)
 router.get('/dashboard/:accountType/:Id/pharmacies', isServiceOwner, RenderPages.getAllRegisteredPharmacy)
 router.get('/dashboard/:accountType/:Id/hospitals', isServiceOwner, RenderPages.getAllRegisteredHopitals)
@@ -36,6 +34,13 @@ router.get('/dashboard/:accountType/:Id/sales',  RenderPages.getAllPharmacySales
 
 // payment webhook routes
 router.post('/payments/webhook', purchaseController.handlePaystackWebhook)
+
+
+// dashboard pages for staff
+router.get('/dashboard/:accountType/facility/:Id/staffs',  RenderPages.getFacilityStaffs)
+router.get('/dashboard/:accountType/facility/:Id/appointments',  RenderPages.getFacilityAppointments)
+router.get('/dashboard/:accountType/facility/:Id/patients',  RenderPages.getAllPatients)
+router.get('/dashboard/:accountType/:Id/patient/:patientId',  RenderPages.getPatient)
 
 
 module.exports = router
