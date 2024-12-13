@@ -50,9 +50,7 @@ const purchaseController = {
       console.error('Webhook processing error:', error);
       res.sendStatus(500);
     }
-  },
-
-
+  }
 };
 
   // Helper functions to handle different payment types
@@ -72,6 +70,7 @@ const purchaseController = {
     const message = generateFacilitySubscriptionConfirmationMessage(facility, subscriptionDetails);
     await sendEmail(facility.email, 'Subscription Payment Confirmation', message);
   }
+
   async function handleMedicalBillsPayment(metadata) {
     const { patientmedicalrecords, facility, patientId } = metadata;
 
@@ -91,6 +90,7 @@ const purchaseController = {
     const message = generatePatientPaymentApprovedMessage(patient, medicalRecords.billingDetails, facility);
     await sendEmail(patient.contact.email, 'Medical Bill Payment Approved', message);
   }
+
   async function handleServiceChargesPayment(metadata) {
     const { facilityId, patientId } = metadata;
 
