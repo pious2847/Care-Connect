@@ -83,8 +83,9 @@ const purchaseController = {
           if (facility) {
             return res.status(404).send('Unable to find ficility ');
           }
-          console.log("found patient", patient, patientId)
           
+          console.log("found patient", patient, patientId)
+
           patient.currentAdmission.isAdmitted = false;
           patient.currentAdmission.hospital = null;
           patient.currentAdmission.admissionDate = null;
