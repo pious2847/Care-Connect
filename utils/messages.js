@@ -289,6 +289,64 @@ const generateFacilityAppointmentEmail = (appointment, facility) => {
 `;
 };
 
+const generatePatientPaymentApprovedMessage = (patient, billing, facility) => {
+    return `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Payment Confirmation - Care Connect</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect Logo" style="max-width: 200px; height: auto;">
+      </div>
+  
+      <h1 style="color: #2563eb; text-align: center;">Payment Confirmation</h1>
+      
+      <p>Dear ${patient.firstName} ${patient.lastName},</p>
+      
+      <p>We are pleased to confirm that your medical bill has been successfully paid.</p>
+      
+      <div style="background-color: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h2 style="color: #1e40af; margin-top: 0;">Payment Details</h2>
+          <p><strong>Patient Name:</strong> ${patient.firstName} ${patient.lastName}</p>
+          <p><strong>Invoice Number:</strong> INV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}</p>
+          <p><strong>Facility:</strong> ${facility.name}</p>
+          <p><strong>Payment Date:</strong> ${new Date().toLocaleString()}</p>
+          <p><strong>Total Amount Due:</strong> $${billing.totalAmount.toFixed(2)}</p>
+      </div>
+
+      <p>Your medical bill has been fully settled. Please keep this confirmation for your records.</p>
+  
+      <p>If you have any questions about this payment or need further assistance, please contact our support:</p>
+      <p style="margin-left: 20px;">
+          Email: billing@careconnect.com<br>
+          Phone: +233 24 274 3903
+      </p>
+  
+      <p>Thank you for choosing Care Connect for your healthcare needs.</p>
+      
+      <p>Best regards,<br>
+      Billing Department<br>
+      Care Connect</p>
+      
+      <div style="margin-top: 40px; border-top: 2px solid #e5e7eb; padding-top: 20px; text-align: center;">
+          <p style="color: #6b7280; font-size: 0.8em;">
+              Care Connect - Empowering Healthcare Organizations<br>
+              <a href="https://care-connect-l1ha.onrender.com" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
+          </p>
+      </div>
+  
+      <div style="text-align: center; margin-top: 20px; font-size: 0.8em; color: #6b7280;">
+          <p>This payment confirmation is confidential and intended solely for the named recipient.</p>
+      </div>
+  </body>
+  </html>
+    `;
+};
+
 const generatePatientPaymentMessage = (patient, billing, authorization_url) => {
     return `
   <!DOCTYPE html>
@@ -358,9 +416,9 @@ const generatePatientPaymentMessage = (patient, billing, authorization_url) => {
   </body>
   </html>
     `;
-  };
+};
 
-  const generateFacilityPaymentMessage = (facility, patient, paymentDetails) => {
+const generateFacilityPaymentMessage = (facility, patient, paymentDetails) => {
     return `
   <!DOCTYPE html>
   <html lang="en">
@@ -454,5 +512,82 @@ const generatePatientPaymentMessage = (patient, billing, authorization_url) => {
   </body>
   </html>
     `;
-  };
-module.exports = {generatePatientPaymentMessage, generateFacilityPaymentMessage, generatStaffeWelcomeMessage, generateFacilityWelcomeMessage, generateAppointmentEmail, generateFacilityAppointmentEmail };
+};
+const generateFacilityPaymentApprovedMessage = (facility, patient, paymentDetails) => {
+    return `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Care Connect - Patient Discharge Payment Confirmation</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect Logo" style="max-width: 200px; height: auto;">
+      </div>
+  
+      <h1 style="color: #2563eb; text-align: center;">Patient Discharge Service Payment Confirmed</h1>
+      
+      <p>Dear ${facility.name} Management,</p>
+      
+      <p>We are writing to confirm that the service charge for patient discharge has been successfully processed.</p>
+      
+      <div style="background-color: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h2 style="color: #1e40af; margin-top: 0;">Patient Details</h2>
+          <p><strong>Patient Name:</strong> ${patient.firstName} ${patient.lastName}</p>
+          <p><strong>Patient ID:</strong> ${patient.patientId || 'N/A'}</p>
+          <p><strong>Discharge Date:</strong> ${new Date().toLocaleDateString()}</p>
+      </div>
+  
+      <div style="background-color: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h2 style="color: #1e40af; margin-top: 0;">Payment Confirmation</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                  <th style="border: 1px solid #e5e7eb; padding: 10px; text-align: left;">Description</th>
+                  <th style="border: 1px solid #e5e7eb; padding: 10px; text-align: right;">Amount</th>
+              </tr>
+              <tr>
+                  <td style="border: 1px solid #e5e7eb; padding: 10px;">Patient Discharge Processing Fee</td>
+                  <td style="border: 1px solid #e5e7eb; padding: 10px; text-align: right;">$${paymentDetails.dischargeProcessingFee.toFixed(2)}</td>
+              </tr>
+              <tr>
+                  <td style="border: 1px solid #e5e7eb; padding: 10px;">Transaction Date</td>
+                  <td style="border: 1px solid #e5e7eb; padding: 10px; text-align: right;">${new Date().toLocaleString()}</td>
+              </tr>
+              <tr>
+                  <td style="border: 1px solid #e5e7eb; padding: 10px; font-weight: bold;">Total Paid</td>
+                  <td style="border: 1px solid #e5e7eb; padding: 10px; text-align: right; font-weight: bold;">$${paymentDetails.dischargeProcessingFee.toFixed(2)}</td>
+              </tr>
+          </table>
+      </div>
+  
+      <div style="background-color: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h2 style="color: #1e40af; margin-top: 0;">Facility Information</h2>
+          <p><strong>Facility Name:</strong> ${facility.name}</p>
+          <p><strong>Facility ID:</strong> ${facility.username}</p>
+          <p><strong>Contact Email:</strong> ${facility.email}</p>
+      </div>
+  
+      <p>Thank you for using Care Connect to manage your facility's patient discharge process.</p>
+      
+      <p>Best regards,<br>
+      Billing Department<br>
+      Care Connect</p>
+      
+      <div style="margin-top: 40px; border-top: 2px solid #e5e7eb; padding-top: 20px; text-align: center;">
+          <p style="color: #6b7280; font-size: 0.8em;">
+              Care Connect - Empowering Healthcare Organizations<br>
+              <a href="https://care-connect-l1ha.onrender.com" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
+          </p>
+      </div>
+  
+      <div style="text-align: center; margin-top: 20px; font-size: 0.8em; color: #6b7280;">
+          <p>Payment Confirmation for Care Connect System Service Charge</p>
+      </div>
+  </body>
+  </html>
+    `;
+};
+
+module.exports = {generateFacilityPaymentApprovedMessage,generatePatientPaymentApprovedMessage,generatePatientPaymentMessage, generateFacilityPaymentMessage, generatStaffeWelcomeMessage, generateFacilityWelcomeMessage, generateAppointmentEmail, generateFacilityAppointmentEmail };

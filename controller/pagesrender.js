@@ -257,7 +257,6 @@ const RenderPages = {
 
         res.render('./Dashboard/patients', { account: hospital, hospitals, patients: hospital.patients, count: hospital.patients.length, alert, accountType })
     },
-    // Get patient details
     async getPatient(req, res) {
         const { Id, accountType, patientId } = req.params;
         const alertMessage = req.flash("message");

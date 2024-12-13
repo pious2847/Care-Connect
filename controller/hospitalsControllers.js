@@ -54,9 +54,13 @@ const hospitalController = {
                     publicId
                 }
             });
-
+            const metadata = {
+                facilityId: newHospital._id,
+                ...newHospital,
+                paymenttype: 'subscription'
+            }
             // Initialize payment before saving
-            const initializePayment = await initiatePaystackPayment(email, 300, newHospital);
+            const initializePayment = await initiatePaystackPayment(email, 300, metadata);
 
             // Save the hospital
             await newHospital.save();

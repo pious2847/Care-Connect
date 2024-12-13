@@ -51,8 +51,14 @@ const PhamarcyController = {
                 }
             });
 
+            const metadata = {
+                facilityId: newPhamarcies._id,
+                ...newPhamarcies,
+                paymenttype: 'subscribe',
+            }
+            
             // Initialize payment before saving
-            const initializePayment = await initiatePaystackPayment(email, 300, newPhamarcies);
+            const initializePayment = await initiatePaystackPayment(email, 300, metadata);
             
             // Save the Phamarcies
             await newPhamarcies.save();
