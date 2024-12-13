@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const Hospitals = require('../models/hospitals');
 const Pharmacies = require('../models/pharmacy');
 const { sendEmail } = require('../utils/MailSender');
-const { generatePatientPaymentMessage, generatePatientPaymentApprovedMessage, generateFacilityPaymentApprovedMessage } = require('../utils/messages');
+const { generateFacilitySubscriptionConfirmationMessage, generatePatientPaymentApprovedMessage, generateFacilityPaymentApprovedMessage } = require('../utils/messages');
 
 const purchaseController = {
   /**
@@ -27,7 +27,7 @@ const purchaseController = {
       try {
 
         if (paymenttype === 'subscription') {
-          const { facilityId } = metadata;
+          const { facilityId , subscriptionDetails} = metadata;
 
 
           let facility = null
@@ -44,6 +44,9 @@ const purchaseController = {
           facility.subscriptionstatus = true
 
           facility.save();
+
+          const message = generateFacilitySubscriptionConfirmationMessage(facility, subscriptionDetails );
+          await sendEmail(facility.email, 'Subscription payment Confirmation Approved Successful', message)
 
           res.sendStatus(200);
         }
@@ -84,6 +87,7 @@ const purchaseController = {
       res.sendStatus(200);
     }
   }
+  
 };
 
 module.exports = purchaseController;
