@@ -29,7 +29,7 @@ const generatStaffeWelcomeMessage = (organization, user, password) => {
     <div style="background-color: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0;">
         <h2 style="color: #1e40af; margin-top: 0;">Getting Started</h2>
         <ol style="padding-left: 20px;">
-            <li><strong>Access the Portal:</strong> Visit <a href="https://care-connect-l1ha.onrender.com/login" style="color: #2563eb;">https://care-connect-l1ha.onrender.com/login</a></li>
+            <li><strong>Access the Portal:</strong> Visit <a href="https://care-connect-uwas.onrender.com/login" style="color: #2563eb;">https://care-connect-uwas.onrender.com/login</a></li>
             <li><strong>First Login:</strong> Use your email and temporary password provided above</li>
             <li><strong>Update Password:</strong> Change your password to something secure and memorable</li>
             <li><strong>Complete Profile:</strong> Update your profile information and add any required fields</li>
@@ -64,7 +64,7 @@ const generatStaffeWelcomeMessage = (organization, user, password) => {
                     <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect" style="max-width: 120px; height: auto;">
                     <p style="color: #6b7280; font-size: 0.8em;">
                         Care Connect - Empowering Healthcare Organizations<br>
-                        <a href="https://care-connect-l1ha.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
+                        <a href="https://care-connect-uwas.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
                     </p>
                 </td>
             </tr>
@@ -126,7 +126,7 @@ const generateFacilityWelcomeMessage = (organization, paymentDetails) => {
         <h2 style="color: #1e40af; margin-top: 0;">Getting Started</h2>
         <ol style="padding-left: 20px;">
             <li><strong>Complete Payment:</strong> Use the payment link above to activate your subscription</li>
-            <li><strong>Access Dashboard:</strong> Visit <a href="https://care-connect-l1ha.onrender.com/login" style="color: #2563eb;">https://care-connect-l1ha.onrender.com/login</a></li>
+            <li><strong>Access Dashboard:</strong> Visit <a href="https://care-connect-uwas.onrender.com/login" style="color: #2563eb;">https://care-connect-uwas.onrender.com/login</a></li>
             <li><strong>Update Profile:</strong> Complete your facility profile with any additional information</li>
             <li><strong>Explore Features:</strong> Familiarize yourself with our healthcare management tools</li>
         </ol>
@@ -149,7 +149,7 @@ const generateFacilityWelcomeMessage = (organization, paymentDetails) => {
             <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect" style="max-width: 120px; height: auto;">
             <p style="color: #6b7280; font-size: 0.8em;">
                 Care Connect - Empowering Healthcare Organizations<br>
-                <a href="https://care-connect-l1ha.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
+                <a href="https://care-connect-uwas.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
             </p>
         </div>
     </div>
@@ -187,7 +187,7 @@ const generateAppointmentEmail = (appointment, facility) => {
         <p><strong>Appointment Time:</strong> ${appointment.time}</p>
         <p><strong>Provider:</strong> ${appointment.name}</p>
         <p><strong>Reason for Visit:</strong> ${appointment.message} </p>
-        <p><strong>Meeting Room:</strong> https://care-connect-l1ha.onrender.com/room/${appointment._id} </p>
+        <p><strong>Meeting Room:</strong> https://care-connect-uwas.onrender.com/room/${appointment._id} </p>
     </div>
 
     <div style="background-color: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0;">
@@ -212,7 +212,7 @@ const generateAppointmentEmail = (appointment, facility) => {
                     <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect" style="max-width: 120px; height: auto;">
                     <p style="color: #6b7280; font-size: 0.8em;">
                         Care Connect - Empowering Healthcare Organizations<br>
-                        <a href="https://care-connect-l1ha.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
+                        <a href="https://care-connect-uwas.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
                     </p>
                 </td>
             </tr>
@@ -252,7 +252,7 @@ const generateFacilityAppointmentEmail = (appointment, facility) => {
         <p><strong>Appointment Date:</strong> ${appointment.date}</p>
         <p><strong>Appointment Time:</strong> ${appointment.time}</p>
         <p><strong>Reason for Visit:</strong> ${appointment.message}</p>
-        <p><strong>Meeting Room:</strong> <a href="https://care-connect-l1ha.onrender.com/room/${appointment._id}">Join Meeting</a></p>
+        <p><strong>Meeting Room:</strong> <a href="https://care-connect-uwas.onrender.com/room/${appointment._id}">Join Meeting</a></p>
     </div>
 
     <div style="background-color: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0;">
@@ -274,7 +274,7 @@ const generateFacilityAppointmentEmail = (appointment, facility) => {
                     <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect" style="max-width: 120px; height: auto;">
                     <p style="color: #6b7280; font-size: 0.8em;">
                         Care Connect - Empowering Healthcare Organizations<br>
-                        <a href="https://care-connect-l1ha.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
+                        <a href="https://care-connect-uwas.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
                     </p>
                 </td>
             </tr>

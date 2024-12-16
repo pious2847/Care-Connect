@@ -1,3 +1,4 @@
+const { request } = require("express");
 const Appointments = require("../models/appointments");
 const Hospitals = require("../models/hospitals");
 const Pharmacies = require("../models/pharmacy");
@@ -49,6 +50,9 @@ const AppointmentController = {
     async createAppointment(req, res){
         try {
             const { name, email, time, facilityId, date, message} = req.body;
+
+          
+
             let facility;
              if(facilityId){
                 facility = await Hospitals.findById(facilityId);
@@ -83,10 +87,18 @@ const AppointmentController = {
 
             await sendEmail(facility.email, 'Appointment Booking Notice' , facilityappointmentmessage);
 
+            if(request.session){
+             const {accountType, accountId} = req.session;
 
-            req.flash('message', ` Appointment successfully booked with ${facility.name}!`);
-            req.flash('status', 'success');
-            res.redirect('/')
+                req.flash('message', ` Appointment successfully booked with ${facility.name}!`);
+                req.flash('status', 'success');
+                res.redirect(`/dashboard/${accountType}/${accountId}`);
+            }else{  
+                req.flash('message', ` Appointment successfully booked with ${facility.name}!`);
+                req.flash('status', 'success');
+                res.redirect('/')
+            }
+           
         } catch (error) {
             console.error(error.message);
             req.flash('message', 'An error occurred during login. Please check your email.');

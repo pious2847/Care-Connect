@@ -23,10 +23,15 @@
                                <%- include('./phamarcy') %>
                             <% } else if (accountType === 'staff') { %>
                                <%- include('./staff') %>
-                            <% } else { %>
-                                <p>Patient</p>
+                               <% } else { %>
+                                <%- include('./patient') %>
+
+                                <br>
+                                <br>
+                                  <%- include('../forms/contacts/appointments') %>
+
                                  <% } %>
-                             <a href="http://" target="_blank" rel="noopener noreferrer"></a>
+                            
                                
                             </div>
                     </div>

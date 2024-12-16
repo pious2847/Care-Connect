@@ -99,7 +99,7 @@ const hospitalController = {
             } else if (accountType === 'staff') {
                 account = await staffs.findOne({ email });
             } else {
-                account = await Patient.findOne({ email });
+                account = await Patient.findOne({'contact.email':  email });
             }
 
             if (!account) {

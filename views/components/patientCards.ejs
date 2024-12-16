@@ -35,7 +35,7 @@
                 </li>
             </ul>
             <div class="d-flex justify-content-between align-items-center">
-                <span class="badge bg-<%= patient.currentAdmission.isAdmitted ? 'danger' : 'success' %>">
+                <span class="badge bg-<%= patient.currentAdmission.isAdmitted ?  'success' :'danger'%>">
                     <%= patient.currentAdmission.isAdmitted ? 'Admitted' : 'Not Admitted' %>
                 </span>
                 <a href="/dashboard/<%= accountType %>/<%= account._id %>/patient/<%= patient._id %>"
