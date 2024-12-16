@@ -151,13 +151,38 @@ const RenderPages = {
                             })
                         if (!account) {
                             account = await Patients.findById(Id)
+                                .populate({
+                                    path: 'medicalRecords',
+                                    populate: [
+                                        {
+                                            path: 'admitedBy',
+                                            select: 'title firstname lastname email'
+                                        },
+                                        {
+                                            path: 'hospital',
+                                            select: 'name location'
+                                        }
+                                    ]
+                                })
+                                .populate('registeredHospitals.hospital');
                         }
                     }
                 }
             }
-            console.log(account)
 
-            res.render('./Dashboard/dashboard', { account, accountType, alert })
+            if (accountType === 'patient') {
+                const hospitals = await Hospitals.find({ subscriptionstatus: true }).populate({
+                    path: 'staffs',
+                    match: { status: { $regex: '^Active$', $options: 'i' } },
+                    options: {
+                        sort: { position: -1 },
+                    }
+                })
+             res.render('./Dashboard/dashboard', { account, accountType, alert, patient: account, patientId: account._id, calculateAge: calculateAge , hospitals })
+            }else{
+                res.render('./Dashboard/dashboard', { account, accountType, alert })
+            }
+
         } catch (error) {
             console.error(error.message);
             res.status(500).json({ success: false, message: error.message });
@@ -211,7 +236,7 @@ const RenderPages = {
                 facilitystaffs = account.facilityId.staffs
             }
 
-            console.log(facilitystaffs)
+
             res.render('./Dashboard/staffs', { account, staffs: facilitystaffs, accountType, alert })
         } catch (error) {
             console.error(error.message);
@@ -302,14 +327,12 @@ const RenderPages = {
                 })
             patients = account.facilityId.patients;
         }
-
-        console.log('patients', patients, 'account', account)
-
-
         res.render('./Dashboard/patients', { account, hospitals, patients, count: patients.length, alert, accountType })
     },
     async getPatient(req, res) {
         const { Id, accountType, patientId } = req.params;
+        const { accountId } = req.session
+
         const alertMessage = req.flash("message");
         const alertStatus = req.flash("status");
 
@@ -331,15 +354,37 @@ const RenderPages = {
             })
             .populate('registeredHospitals.hospital');
 
-        if (!patient.registeredHospitals.some(reg => reg.hospital._id.toString() === Id)) {
-            console.log('Patient not found in this hospital');
-        }
+
         let account = null;
-        if (Id) {
+
+        if (Id && accountType === 'hospitals') {
+
+            if (!patient.registeredHospitals.some(reg => reg.hospital._id.toString() === Id)) {
+                console.log('Patient not found in this hospital');
+            }
             account = await Hospitals.findById(Id)
                 .populate('staffs')
                 .populate('appointments')
                 .populate('patients')
+
+        }
+        if (accountType === 'staff') {
+            account = await staffs.findById(accountId)
+                .populate({
+                    path: 'facilityId',
+                    populate: [
+                        {
+                            path: 'staffs'
+                        },
+                        {
+                            path: 'appointments'
+                        },
+                        {
+                            path: 'patients'
+                        },
+
+                    ]
+                })
 
         }
 
