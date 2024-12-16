@@ -87,7 +87,7 @@ const AppointmentController = {
 
             await sendEmail(facility.email, 'Appointment Booking Notice' , facilityappointmentmessage);
 
-            if(request.session){
+            if(req.session){
              const {accountType, accountId} = req.session;
 
                 req.flash('message', ` Appointment successfully booked with ${facility.name}!`);
