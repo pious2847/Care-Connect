@@ -41,8 +41,14 @@ const RenderPages = {
     },
     async getDoctors(req, res) {
         try {
-            const doctors = await staffs.find({ status: 'Active' })
-            res.render('./Home/doctors', { doctors })
+            const hospitals = await Hospitals.find({ subscriptionstatus: true }).populate({
+                path: 'staffs',
+                match: { status: { $regex: '^Active$', $options: 'i' } },
+                options: {
+                    sort: { position: -1 },
+                }
+            })
+            res.render('./Home/doctors', {  hospitals })
         } catch (error) {
             console.error(error.message);
             res.status(500).json({ success: false, message: error.message });
@@ -50,8 +56,14 @@ const RenderPages = {
     },
     async getContacts(req, res) {
         try {
-            const doctors = await staffs.find({ status: 'Active' })
-            res.render('./Home/contact', { doctors })
+            const hospitals = await Hospitals.find({ subscriptionstatus: true }).populate({
+                path: 'staffs',
+                match: { status: { $regex: '^Active$', $options: 'i' } },
+                options: {
+                    sort: { position: -1 },
+                }
+            })
+            res.render('./Home/contact', { hospitals })
         } catch (error) {
             console.error(error.message);
             res.status(500).json({ success: false, message: error.message });
