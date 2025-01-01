@@ -12,29 +12,41 @@ const { sendEmail } = require('../utils/MailSender');
 const hospitalController = {
     async createHospital(req, res) {
         try {
-            const { name, username, email, contact, ambulancecontact, address, walletnumber, walletname, bio, password } = req.body;
+            const { name, username, email, contact, ambulancecontact, address, 
+                    walletnumber, walletname, bio, password } = req.body;
+            
+            // Check for existing hospital
+            const existingHospital = await Hospitals.find({ 
+                email: new RegExp(`^${email}$`, 'i') 
+            });
     
-            // Check if hospital already exists
-            const existingHospital = await Hospitals.findOne({ email: new RegExp(`^${email}$`, 'i') });
-            if (existingHospital) {
-                req.flash('message', `Email already registered With Another Hospital`);
+            if (existingHospital.length > 0) {
+                req.flash('message', 'Email already registered with another hospital');
                 req.flash('status', 'danger');
                 return res.redirect('/register/hospital');
             }
     
-            // Handle logo upload
+            // Process logo upload
             let logoUrl = 'https://via.placeholder.com/150';
             let publicId = null;
+            
             if (req.files?.logo) {
-                const profileResult = await cloudinary.uploader.upload(req.files.logo[0].path, { folder: "facilities_logo" });
-                logoUrl = profileResult.secure_url;
-                publicId = profileResult.public_id;
+                try {
+                    const profileResult = await cloudinary.uploader.upload(
+                        req.files.logo[0].path,
+                        { folder: "facilities_logo" }
+                    );
+                    logoUrl = profileResult.secure_url;
+                    publicId = profileResult.public_id;
+                } catch (uploadError) {
+                    console.error('Logo upload error:', uploadError);
+                    // Continue with default logo
+                }
             }
     
-            // Hash password
             const hashedPassword = await bcrypt.hash(password, 12);
     
-            // Create new hospital object
+            // Create hospital instance but don't save yet
             const newHospital = new Hospitals({
                 name,
                 bio,
@@ -42,49 +54,62 @@ const hospitalController = {
                 email,
                 username,
                 password: hashedPassword,
-                wallet: { name: walletname, number: walletnumber },
+                wallet: {
+                    name: walletname,
+                    number: walletnumber
+                },
                 ambulancecontact,
                 address,
-                logo: { picture: logoUrl, publicId },
+                logo: {
+                    picture: logoUrl,
+                    publicId
+                }
             });
     
-            // Save hospital data
-            await newHospital.save();
-    
-            // Prepare metadata for payment
+            // Prepare payment metadata
             const metadata = {
-                facilityId: newHospital._id,
-                ...newHospital.toObject(),
-                paymenttype: 'subscription',
+                facilityId: newHospital._id.toString(), // Convert ObjectId to string
+                facilityName: name,
+                email,
+                paymentType: 'subscription',
                 subscriptionDetails: {
                     planName: "Professional Plan",
                     period: "Annual",
-                    amount: 300.00,
-                },
+                    amount: 300.00
+                }
             };
     
-            // Initialize payment asynchronously
-            initiatePaystackPayment(email, 300, metadata)
-                .then(async (initializePayment) => {
-                    // Send welcome email
-                    const message = generateFacilityWelcomeMessage(newHospital, initializePayment);
-                    await sendEmail(email, 'Facility Account Registration', message);
+            // Initialize payment
+            const paymentData = await initiatePaystackPayment(email, 300, metadata);
+            
+            // Only save hospital if payment initialization succeeds
+            await newHospital.save();
     
-                    console.log(`${newHospital.name}'s payment initialized successfully.`);
-                })
-                .catch((error) => {
-                    console.error('Payment Initialization Error:', error);
-                });
+            // Send welcome email
+            const message = generateFacilityWelcomeMessage(newHospital, paymentData);
+            await sendEmail(email, 'Facility account registration', message);
     
-            // Flash success message
-            req.flash('message', `${newHospital.name}! Account created successfully. Please check email to complete subscription.`);
+            req.flash('message', 
+                `${newHospital.name} account has been created successfully. Please check your email to complete subscription.`);
             req.flash('status', 'success');
-            res.redirect('/login');
+            return res.redirect('/login');
+    
         } catch (error) {
             console.error('Hospital registration error:', error);
-            req.flash('message', `An error occurred during registration. Please try again.`);
+            
+            let errorMessage = 'An error occurred during registration. ';
+            
+            if (error.code === 'TIMEOUT') {
+                errorMessage += 'The payment service is currently slow. Please try again in a few minutes.';
+            } else if (error.code === 'PAYMENT_INIT_FAILED') {
+                errorMessage += 'Payment initialization failed. Please verify your details and try again.';
+            } else {
+                errorMessage += 'Please try again.';
+            }
+    
+            req.flash('message', errorMessage);
             req.flash('status', 'danger');
-            res.redirect('/register/hospital');
+            return res.redirect('/register/hospital');
         }
     },
     async login(req, res) {
