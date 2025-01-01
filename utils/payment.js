@@ -13,17 +13,13 @@ const https = require('https');
  * @throws {Error} If the payment initialization fails or if there's an error parsing the response.
  */
 function initiatePaystackPayment(email, amount, metadata = {}) {
-
   return new Promise((resolve, reject) => {
-    // Prepare the request parameters
     const params = JSON.stringify({
-      email: email,
-      amount: amount * 100, // Paystack expects amount in the smallest currency unit
-      metadata: metadata
+      email,
+      amount: amount * 100, // Convert to kobo
+      metadata
     });
 
-
-    // Set up the options for the HTTPS request
     const options = {
       hostname: 'api.paystack.co',
       port: 443,
@@ -32,40 +28,43 @@ function initiatePaystackPayment(email, amount, metadata = {}) {
       headers: {
         Authorization: `Bearer ${process.env.PAYSTACK_API_KEY}`,
         'Content-Type': 'application/json'
-      }
+      },
+      timeout: 10000 // 10 seconds timeout
     };
 
-    // Create and send the HTTPS request
     const req = https.request(options, res => {
       let data = '';
 
-      // Collect the response data
-      res.on('data', (chunk) => {
+      res.on('data', chunk => {
         data += chunk;
       });
 
-      // Process the complete response
       res.on('end', () => {
         try {
           const parsedData = JSON.parse(data);
           if (parsedData.status) {
             resolve(parsedData.data);
           } else {
+            console.error('Paystack API Error:', parsedData);
             reject(new Error(parsedData.message || 'Payment initialization failed'));
           }
         } catch (error) {
+          console.error('Error parsing Paystack response:', data);
           reject(new Error('Failed to parse Paystack response'));
         }
       });
     });
 
-    // Handle any errors that occur during the request
     req.on('error', error => {
-      console.log(error)
+      console.error('Paystack Request Error:', error);
       reject(error);
     });
 
-    // Send the request
+    req.on('timeout', () => {
+      reject(new Error('Request to Paystack timed out'));
+      req.destroy();
+    });
+
     req.write(params);
     req.end();
   });
