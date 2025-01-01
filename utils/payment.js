@@ -3,21 +3,20 @@ const https = require('https');
 /**
  * Initiates a payment transaction with Paystack.
  * 
- * This function sends a request to Paystack's API to initialize a payment transaction.
- * It uses the HTTPS module to make a secure POST request to Paystack's server.
- * 
- * @param {string} email - The email address of the user making the payment.
- * @param {number} amount - The amount to be paid in the smallest currency unit (e.g., kobo for Naira).
- * @param {Object} [metadata={}] - Additional information to be sent with the payment request.
- * @returns {Promise<Object>} A promise that resolves with the payment initialization data from Paystack.
- * @throws {Error} If the payment initialization fails or if there's an error parsing the response.
+ * @param {string} email - User's email address
+ * @param {number} amount - Amount in main currency unit (will be converted to kobo)
+ * @param {Object} metadata - Additional transaction information
+ * @returns {Promise<Object>} Payment initialization data
  */
 function initiatePaystackPayment(email, amount, metadata = {}) {
   return new Promise((resolve, reject) => {
+    // Add request timeout
+    const TIMEOUT_MS = 30000; // 30 seconds
+
     const params = JSON.stringify({
       email,
-      amount: amount * 100, // Convert to kobo
-      metadata
+      amount: Math.round(amount * 100), // Convert to kobo and ensure integer
+      metadata: JSON.parse(JSON.stringify(metadata)) // Sanitize metadata
     });
 
     const options = {
@@ -27,42 +26,50 @@ function initiatePaystackPayment(email, amount, metadata = {}) {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${process.env.PAYSTACK_API_KEY}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
       },
-      timeout: 10000 // 10 seconds timeout
+      timeout: TIMEOUT_MS
     };
 
     const req = https.request(options, res => {
       let data = '';
 
-      res.on('data', chunk => {
+      res.on('data', (chunk) => {
         data += chunk;
       });
 
       res.on('end', () => {
         try {
           const parsedData = JSON.parse(data);
-          if (parsedData.status) {
+          
+          // Check for both status and response code
+          if (parsedData.status && res.statusCode >= 200 && res.statusCode < 300) {
             resolve(parsedData.data);
           } else {
-            console.error('Paystack API Error:', parsedData);
-            reject(new Error(parsedData.message || 'Payment initialization failed'));
+            const error = new Error(parsedData.message || 'Payment initialization failed');
+            error.code = 'PAYMENT_INIT_FAILED';
+            error.details = parsedData;
+            reject(error);
           }
         } catch (error) {
-          console.error('Error parsing Paystack response:', data);
-          reject(new Error('Failed to parse Paystack response'));
+          error.code = 'PARSE_ERROR';
+          reject(error);
         }
       });
     });
 
-    req.on('error', error => {
-      console.error('Paystack Request Error:', error);
+    // Handle request timeout
+    req.setTimeout(TIMEOUT_MS, () => {
+      req.destroy();
+      const error = new Error('Request timed out');
+      error.code = 'TIMEOUT';
       reject(error);
     });
 
-    req.on('timeout', () => {
-      reject(new Error('Request to Paystack timed out'));
-      req.destroy();
+    req.on('error', error => {
+      error.code = error.code || 'NETWORK_ERROR';
+      reject(error);
     });
 
     req.write(params);
