@@ -8,6 +8,9 @@ const Hospitals = require('../models/hospitals');
 const Pharmacies = require('../models/pharmacy');
 
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
 
 const staffController = {
 
@@ -100,7 +103,7 @@ const staffController = {
         status: status || 'offline',
         contact,
         facilityId: accountId,
-        facilityType: accountType,
+        facilityType: capitalizeFirstLetter(accountType),
         password: hashedPassword,
         profile: {
           picture: profileUrl || 'https://via.placeholder.com/150',
