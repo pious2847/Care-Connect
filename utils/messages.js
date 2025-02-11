@@ -5,7 +5,7 @@ const generatStaffeWelcomeMessage = (organization, user, password) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to ${organization.name} - Care Connect</title>
+    <title>Welcome to ${organization.name} - Care Cycle</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
     <div style="text-align: center; margin-bottom: 30px;">
@@ -61,9 +61,9 @@ const generatStaffeWelcomeMessage = (organization, user, password) => {
             <tr>
                 <td style="text-align: center;">
                     <p style="color: #6b7280; font-size: 0.8em; margin: 0;">Powered by</p>
-                    <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect" style="max-width: 120px; height: auto;">
+                    <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle" style="max-width: 120px; height: auto;">
                     <p style="color: #6b7280; font-size: 0.8em;">
-                        Care Connect - Empowering Healthcare Organizations<br>
+                        Care Cycle - Empowering Healthcare Organizations<br>
                         <a href="https://care-connect-uwas.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
                     </p>
                 </td>
@@ -86,18 +86,18 @@ const generateFacilityWelcomeMessage = (organization, paymentDetails) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Care Connect - ${organization.name}</title>
+    <title>Welcome to Care Cycle - ${organization.name}</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
     <div style="text-align: center; margin-bottom: 30px;">
-        <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect Logo" style="max-width: 200px; height: auto;">
+        <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle Logo" style="max-width: 200px; height: auto;">
     </div>
 
-    <h1 style="color: #2563eb; text-align: center;">Welcome to Care Connect!</h1>
+    <h1 style="color: #2563eb; text-align: center;">Welcome to Care Cycle!</h1>
     
     <p>Dear ${organization.name},</p>
     
-    <p>Thank you for registering with Care Connect! Your healthcare facility account has been successfully created. Below are your account details and payment information:</p>
+    <p>Thank you for registering with Care Cycle! Your healthcare facility account has been successfully created. Below are your account details and payment information:</p>
     
     <div style="background-color: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0;">
         <h2 style="color: #1e40af; margin-top: 0;">Facility Details</h2>
@@ -138,17 +138,17 @@ const generateFacilityWelcomeMessage = (organization, paymentDetails) => {
         Phone: +233 24 274 3903
     </p>
 
-    <p>We're excited to have ${organization.name} join the Care Connect network!</p>
+    <p>We're excited to have ${organization.name} join the Care Cycle network!</p>
     
     <p>Best regards,<br>
-    The Care Connect Team</p>
+    The Care Cycle Team</p>
     
     <div style="margin-top: 40px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
         <div style="text-align: center;">
             <p style="color: #6b7280; font-size: 0.8em; margin: 0;">Powered by</p>
-            <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect" style="max-width: 120px; height: auto;">
+            <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle" style="max-width: 120px; height: auto;">
             <p style="color: #6b7280; font-size: 0.8em;">
-                Care Connect - Empowering Healthcare Organizations<br>
+                Care Cycle - Empowering Healthcare Organizations<br>
                 <a href="https://care-connect-uwas.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
             </p>
         </div>
@@ -168,11 +168,11 @@ const generateAppointmentEmail = (appointment, facility) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appointment Confirmation - Care Connect</title>
+    <title>Appointment Confirmation - Care Cycle</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
     <div style="text-align: center; margin-bottom: 30px;">
-        <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect Logo" style="max-width: 200px; height: auto;">
+        <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle Logo" style="max-width: 200px; height: auto;">
     </div>
 
     <h1 style="color: #2563eb; text-align: center;">Appointment Confirmation</h1>
@@ -209,9 +209,9 @@ const generateAppointmentEmail = (appointment, facility) => {
             <tr>
                 <td style="text-align: center;">
                     <p style="color: #6b7280; font-size: 0.8em; margin: 0;">Powered by</p>
-                    <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect" style="max-width: 120px; height: auto;">
+                    <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle" style="max-width: 120px; height: auto;">
                     <p style="color: #6b7280; font-size: 0.8em;">
-                        Care Connect - Empowering Healthcare Organizations<br>
+                        Care Cycle - Empowering Healthcare Organizations<br>
                         <a href="https://care-connect-uwas.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
                     </p>
                 </td>
@@ -233,11 +233,11 @@ const generateFacilityAppointmentEmail = (appointment, facility) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appointment Notification - Care Connect</title>
+    <title>Appointment Notification - Care Cycle</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
     <div style="text-align: center; margin-bottom: 30px;">
-        <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect Logo" style="max-width: 200px; height: auto;">
+        <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle Logo" style="max-width: 200px; height: auto;">
     </div>
 
     <h1 style="color: #2563eb; text-align: center;">New Appointment Notification</h1>
@@ -264,16 +264,16 @@ const generateFacilityAppointmentEmail = (appointment, facility) => {
     <p>Please ensure you have this appointment scheduled and make any necessary preparations. If you have any questions or need to reschedule, please contact the patient directly or reach out to our team.</p>
     
     <p>Best regards,<br>
-    Care Connect Team</p>
+    Care Cycle Team</p>
     
     <div style="margin-top: 40px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
         <table style="width: 100%;">
             <tr>
                 <td style="text-align: center;">
                     <p style="color: #6b7280; font-size: 0.8em; margin: 0;">Powered by</p>
-                    <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect" style="max-width: 120px; height: auto;">
+                    <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle" style="max-width: 120px; height: auto;">
                     <p style="color: #6b7280; font-size: 0.8em;">
-                        Care Connect - Empowering Healthcare Organizations<br>
+                        Care Cycle - Empowering Healthcare Organizations<br>
                         <a href="https://care-connect-uwas.onrender.com/login" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
                     </p>
                 </td>
@@ -296,11 +296,11 @@ const generatePatientPaymentApprovedMessage = (patient, billing, facility) => {
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Payment Confirmation - Care Connect</title>
+      <title>Payment Confirmation - Care Cycle</title>
   </head>
   <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="text-align: center; margin-bottom: 30px;">
-          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect Logo" style="max-width: 200px; height: auto;">
+          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle Logo" style="max-width: 200px; height: auto;">
       </div>
   
       <h1 style="color: #2563eb; text-align: center;">Payment Confirmation</h1>
@@ -326,15 +326,15 @@ const generatePatientPaymentApprovedMessage = (patient, billing, facility) => {
           Phone: +233 24 274 3903
       </p>
   
-      <p>Thank you for choosing Care Connect for your healthcare needs.</p>
+      <p>Thank you for choosing Care Cycle for your healthcare needs.</p>
       
       <p>Best regards,<br>
       Billing Department<br>
-      Care Connect</p>
+      Care Cycle</p>
       
       <div style="margin-top: 40px; border-top: 2px solid #e5e7eb; padding-top: 20px; text-align: center;">
           <p style="color: #6b7280; font-size: 0.8em;">
-              Care Connect - Empowering Healthcare Organizations<br>
+              Care Cycle - Empowering Healthcare Organizations<br>
               <a href="https://care-connect-l1ha.onrender.com" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
           </p>
       </div>
@@ -354,11 +354,11 @@ const generatePatientPaymentMessage = (patient, billing, authorization_url) => {
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Payment Details - Care Connect</title>
+      <title>Payment Details - Care Cycle</title>
   </head>
   <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="text-align: center; margin-bottom: 30px;">
-          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect Logo" style="max-width: 200px; height: auto;">
+          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle Logo" style="max-width: 200px; height: auto;">
       </div>
   
       <h1 style="color: #2563eb; text-align: center;">Payment Details</h1>
@@ -397,15 +397,15 @@ const generatePatientPaymentMessage = (patient, billing, authorization_url) => {
           Phone: +233 24 274 3903
       </p>
   
-      <p>Thank you for choosing Care Connect for your healthcare needs.</p>
+      <p>Thank you for choosing Care Cycle for your healthcare needs.</p>
       
       <p>Best regards,<br>
       Billing Department<br>
-      Care Connect</p>
+      Care Cycle</p>
       
       <div style="margin-top: 40px; border-top: 2px solid #e5e7eb; padding-top: 20px; text-align: center;">
           <p style="color: #6b7280; font-size: 0.8em;">
-              Care Connect - Empowering Healthcare Organizations<br>
+              Care Cycle - Empowering Healthcare Organizations<br>
               <a href="https://care-connect-l1ha.onrender.com" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
           </p>
       </div>
@@ -425,18 +425,18 @@ const generateFacilityPaymentMessage = (facility, patient, paymentDetails) => {
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Care Connect - Patient Discharge Payment</title>
+      <title>Care Cycle - Patient Discharge Payment</title>
   </head>
   <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="text-align: center; margin-bottom: 30px;">
-          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect Logo" style="max-width: 200px; height: auto;">
+          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle Logo" style="max-width: 200px; height: auto;">
       </div>
   
       <h1 style="color: #2563eb; text-align: center;">Patient Discharge Payment</h1>
       
       <p>Dear ${facility.name} Management,</p>
       
-      <p>This invoice is for the patient discharge processing and Care Connect system usage fee for the following patient:</p>
+      <p>This invoice is for the patient discharge processing and Care Cycle system usage fee for the following patient:</p>
       
       <div style="background-color: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0;">
           <h2 style="color: #1e40af; margin-top: 0;">Patient Details</h2>
@@ -493,21 +493,21 @@ const generateFacilityPaymentMessage = (facility, patient, paymentDetails) => {
           Phone: +233 24 274 3903
       </p>
   
-      <p>Thank you for using Care Connect to manage your facility.</p>
+      <p>Thank you for using Care Cycle to manage your facility.</p>
       
       <p>Best regards,<br>
       Billing Department<br>
-      Care Connect</p>
+      Care Cycle</p>
       
       <div style="margin-top: 40px; border-top: 2px solid #e5e7eb; padding-top: 20px; text-align: center;">
           <p style="color: #6b7280; font-size: 0.8em;">
-              Care Connect - Empowering Healthcare Organizations<br>
+              Care Cycle - Empowering Healthcare Organizations<br>
               <a href="https://care-connect-l1ha.onrender.com" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
           </p>
       </div>
   
       <div style="text-align: center; margin-top: 20px; font-size: 0.8em; color: #6b7280;">
-          <p>This invoice is for Care Connect system usage and patient discharge processing. Confidential information.</p>
+          <p>This invoice is for Care Cycle system usage and patient discharge processing. Confidential information.</p>
       </div>
   </body>
   </html>
@@ -520,11 +520,11 @@ const generateFacilityPaymentApprovedMessage = (facility, patient, paymentDetail
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Care Connect - Patient Discharge Payment Confirmation</title>
+      <title>Care Cycle - Patient Discharge Payment Confirmation</title>
   </head>
   <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="text-align: center; margin-bottom: 30px;">
-          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect Logo" style="max-width: 200px; height: auto;">
+          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle Logo" style="max-width: 200px; height: auto;">
       </div>
   
       <h1 style="color: #2563eb; text-align: center;">Patient Discharge Service Payment Confirmed</h1>
@@ -569,21 +569,21 @@ const generateFacilityPaymentApprovedMessage = (facility, patient, paymentDetail
           <p><strong>Contact Email:</strong> ${facility.email}</p>
       </div>
   
-      <p>Thank you for using Care Connect to manage your facility's patient discharge process.</p>
+      <p>Thank you for using Care Cycle to manage your facility's patient discharge process.</p>
       
       <p>Best regards,<br>
       Billing Department<br>
-      Care Connect</p>
+      Care Cycle</p>
       
       <div style="margin-top: 40px; border-top: 2px solid #e5e7eb; padding-top: 20px; text-align: center;">
           <p style="color: #6b7280; font-size: 0.8em;">
-              Care Connect - Empowering Healthcare Organizations<br>
+              Care Cycle - Empowering Healthcare Organizations<br>
               <a href="https://care-connect-l1ha.onrender.com" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
           </p>
       </div>
   
       <div style="text-align: center; margin-top: 20px; font-size: 0.8em; color: #6b7280;">
-          <p>Payment Confirmation for Care Connect System Service Charge</p>
+          <p>Payment Confirmation for Care Cycle System Service Charge</p>
       </div>
   </body>
   </html>
@@ -597,18 +597,18 @@ const generateFacilitySubscriptionConfirmationMessage = (facility, subscriptionD
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Care Connect - Subscription Confirmation</title>
+      <title>Care Cycle - Subscription Confirmation</title>
   </head>
   <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="text-align: center; margin-bottom: 30px;">
-          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Connect Logo" style="max-width: 200px; height: auto;">
+          <img src="https://res.cloudinary.com/dv2yl5exj/image/upload/v1730564438/facilities_logo/aqqpmcelswgsg7so98da.jpg" alt="Care Cycle Logo" style="max-width: 200px; height: auto;">
       </div>
   
       <h1 style="color: #2563eb; text-align: center;">Subscription Activated Successfully</h1>
       
       <p>Dear ${facility.name} Management,</p>
       
-      <p>Congratulations! Your Care Connect platform subscription has been successfully activated.</p>
+      <p>Congratulations! Your Care Cycle platform subscription has been successfully activated.</p>
       
       <div style="background-color: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0;">
           <h2 style="color: #1e40af; margin-top: 0;">Subscription Details</h2>
@@ -638,7 +638,7 @@ const generateFacilitySubscriptionConfirmationMessage = (facility, subscriptionD
   
       <div style="background-color: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0;">
           <h2 style="color: #1e40af; margin-top: 0;">Next Steps</h2>
-          <p>You can now fully utilize all features of the Care Connect platform. Here are some recommended next steps:</p>
+          <p>You can now fully utilize all features of the Care Cycle platform. Here are some recommended next steps:</p>
           <ul style="padding-left: 20px;">
               <li>Complete your facility profile</li>
               <li>Add your medical staff to the system</li>
@@ -653,15 +653,15 @@ const generateFacilitySubscriptionConfirmationMessage = (facility, subscriptionD
           Phone: +233 24 274 3903
       </p>
   
-      <p>Thank you for choosing Care Connect to streamline your healthcare operations.</p>
+      <p>Thank you for choosing Care Cycle to streamline your healthcare operations.</p>
       
       <p>Best regards,<br>
       Customer Success Team<br>
-      Care Connect</p>
+      Care Cycle</p>
       
       <div style="margin-top: 40px; border-top: 2px solid #e5e7eb; padding-top: 20px; text-align: center;">
           <p style="color: #6b7280; font-size: 0.8em;">
-              Care Connect - Empowering Healthcare Organizations<br>
+              Care Cycle - Empowering Healthcare Organizations<br>
               <a href="https://care-connect-l1ha.onrender.com" style="color: #2563eb; text-decoration: none;">www.careconnect.com</a>
           </p>
       </div>
