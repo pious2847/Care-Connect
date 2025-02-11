@@ -1,4 +1,4 @@
-const CACHE_NAME = 'care-connect-v1';
+const CACHE_NAME = 'care-cycle-v1';
 const urlsToCache = [
   '/',
   '/css/bootstrap.css',
